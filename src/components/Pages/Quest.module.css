@@ -1,0 +1,18 @@
+.questPage ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .questPage .disponible {
+    color: blue;
+  }
+  
+  .questPage .activa {
+    color: orange;
+  }
+  
+  .questPage .completada {
+    color: green;
+    text-decoration: line-through;
+  }
+  

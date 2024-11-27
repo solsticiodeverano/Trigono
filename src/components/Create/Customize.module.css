@@ -1,0 +1,17 @@
+.layerContainer {
+    position: relative;
+    display: inline-block;
+    width: 300px; /* Ajusta según tus imágenes */
+    height: 500px; /* Ajusta según tus imágenes */
+    background-color: blue;
+  }
+  
+  .layer {
+    position: absolute;
+    bottom: 50px; /* Ajusta según tus imágenes */
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    mix-blend-mode: multiply; /* O usa otro modo de mezcla si es necesario */
+  }
+  

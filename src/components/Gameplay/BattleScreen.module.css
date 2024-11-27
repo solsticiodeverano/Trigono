@@ -1,0 +1,25 @@
+.battleScreen {
+    padding: 20px;
+    background-color: #fee;
+    border-radius: 8px;
+  }
+  
+  .healthBars {
+    margin-bottom: 20px;
+  }
+  
+  .attacks button {
+    margin-right: 10px;
+    padding: 10px;
+    background-color: #f90;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+  }
+  
+  .attacks button:disabled {
+    background-color: gray;
+    cursor: not-allowed;
+  }
+  

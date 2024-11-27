@@ -1,0 +1,14 @@
+.skillTree {
+    padding: 20px;
+    background-color: #eef;
+    border-radius: 8px;
+  }
+  
+  .unlocked {
+    color: green;
+  }
+  
+  .locked {
+    color: red;
+  }
+  

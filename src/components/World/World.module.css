@@ -1,0 +1,51 @@
+/* World.module.css */
+.world {
+    position: absolute;
+    top: 10vh;
+    left: 5vw;
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    grid-template-rows: repeat(12, 1fr);
+    gap: 0;
+    width: 90vw; /* Ancho por defecto para formato móvil 16:9 */
+    height: 90vw; /* Alto por defecto para formato móvil 16:9 */
+    overflow: hidden;
+    margin: auto;
+    padding: 0;
+  }
+  
+  .cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+    background-color: #ffffff;
+    font-size: 12px;
+    text-align: center;
+    width: 7.2vw; /* Ancho por defecto para cada celda */
+    height: 7.2vw; /* Alto por defecto para cada celda */
+  }
+  
+  .AGUA {
+    background-color: #4A90E2;
+  }
+  
+  .TIERRA {
+    background-color: brown; /* Color marrón para tipo TIERRA */
+  }
+  
+  /* Media query para formato 16:9 de 1080p */
+  @media (min-width: 1080px) {
+    .world {
+      width: 90vh; /* Ancho ajustado para 16:9 de 1080p */
+      height: 90vh; /* Alto ajustado para 16:9 de 1080p */
+      top: 5vh; /* Ajuste de posición superior */
+      left: 25vw; /* Ajuste de posición izquierda */
+    }
+  
+    .cell {
+      width: 7.3vh; /* Ancho ajustado para cada celda en 16:9 de 1080p */
+      height: 7.3vh; /* Alto ajustado para cada celda en 16:9 de 1080p */
+    }
+  }
+  

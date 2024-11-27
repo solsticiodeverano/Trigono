@@ -1,0 +1,59 @@
+/* src/components/Mochila.module.css */
+
+.mochila {
+    position: fixed;
+    right: 2vw;
+    top: 2vh;
+  }
+  
+  button {
+    background-color: #008cba;
+    color: rgb(0, 0, 0);
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #005f5f;
+  }
+  
+  .content {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    background-color: white;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    padding: 20px;
+    color: black;
+  }
+  
+  .category {
+    margin-bottom: 20px;
+  }
+  
+  .category h3 {
+    margin: 0;
+    margin-bottom: 10px;
+  }
+  
+  .category ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .category ul li {
+    padding: 5px;
+    cursor: pointer;
+  }
+  
+  .category ul li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .selected {
+    background-color: #cfc;
+  }
+  

@@ -1,0 +1,15 @@
+.questLog {
+    padding: 20px;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+  }
+  
+  .activeQuest {
+    color: blue;
+  }
+  
+  .completedQuest {
+    color: gray;
+    text-decoration: line-through;
+  }
+  

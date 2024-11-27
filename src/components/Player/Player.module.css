@@ -1,0 +1,10 @@
+.player {
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    width: 8vw; /* Ancho igual al de las celdas del grid */
+    height: 12vh; /* Alto igual al de las celdas del grid */
+    color: white;
+}

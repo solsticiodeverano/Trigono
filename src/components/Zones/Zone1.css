@@ -1,0 +1,40 @@
+.game-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    overflow: hidden;
+  }
+  
+  .game-screen {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+  }
+  
+  .tile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  
+  .tile-row {
+    display: flex;
+  }
+  
+  .player {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    transform: translate(-50%, -50%);
+  }
+  .game-map {
+    position: relative; /* Permitir que los elementos hijos se posicionen absolutamente en relación a este contenedor */
+    width: 100%; /* O el tamaño deseado */
+    height: auto; /* O el tamaño deseado */
+    display: flex;
+    flex-direction: column; /* Organizar los elementos de la cuadrícula */
+  }
+  
+  

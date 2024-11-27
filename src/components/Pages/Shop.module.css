@@ -1,0 +1,22 @@
+.shop ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .shop li {
+    margin: 10px 0;
+  }
+  
+  .shop button {
+    margin-left: 10px;
+    background-color: #f90;
+    color: white;
+    border: none;
+    cursor: pointer;
+    padding: 5px 10px;
+  }
+  
+  .shop button:hover {
+    background-color: #e07b00;
+  }
+  

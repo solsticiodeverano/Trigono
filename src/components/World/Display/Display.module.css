@@ -1,0 +1,51 @@
+/* src/components/Display.module.css */
+.display {
+    position: fixed;
+    top: 2vh;
+    left: 1vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2vh 2vw;
+  }
+  
+  .info {
+    text-align: center;
+  }
+  
+  .bars {
+    width: 100%;
+    margin: 20px 0;
+  }
+  
+  .barContainer {
+    width: 100%;
+    background: #ccc;
+    margin: 10px 0;
+    height: 20px;
+  }
+  
+  .bar {
+    height: 100%;
+    transition: width 0.3s;
+  }
+  
+  .blue { background-color: blue; }
+  .cyan { background-color: lightblue; }
+  .lightBlue { background-color: white; }
+  .red { background-color: red; }
+  .orange { background-color: orange; }
+  .lightRed { background-color: black; }
+  .green { background-color: green; }
+  .yellowGreen { background-color: yellowgreen; }
+  .lightGreen { background-color: yellow; }
+  .darkViolet { background-color: darkviolet; }
+  .purple { background-color: violet; }
+  .pink { background-color: pink; }
+  
+  .gameOver {
+    color: red;
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
