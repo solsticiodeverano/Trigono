@@ -1,20 +1,20 @@
 import { Link } from 'react-router-dom';
 import styles from './Home.module.css';
+import { PiIntersectThreeThin } from "react-icons/pi";
 
 const Home = () => {
   return (
     <div className={styles.startContainer}>
+      <div className={styles.logo}><PiIntersectThreeThin/></div>
         <h1>TRIGONO</h1>
       <div className={styles.buttonContainer}>
         <Link to="/zona1" className={styles.button}>
-          Jugar
+          Iniciar
         </Link>
         <Link to="/creando" className={styles.button}>
           Nuevo Juego
         </Link>
-        <Link to="/contacto" className={styles.button}>
-          Contacto
-        </Link>
+      
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FaCog } from 'react-icons/fa';
 import styles from './Navbar.module.css';
+import { PiIntersectThreeThin } from "react-icons/pi";
 
 const Navbar = () => {
   const [time, setTime] = useState('');
@@ -20,7 +21,7 @@ const Navbar = () => {
 
   return (
     <div className={styles.navbar}>
-      <div className={styles.logo}>MiJuego</div>
+      <div className={styles.logo}><PiIntersectThreeThin/></div>
       <div className={styles.menu}>
         <div className={styles.time}>{time}</div>
         <div className={styles.date}>{date}</div>

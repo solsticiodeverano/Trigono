@@ -1,22 +1,51 @@
 .startContainer {
-    height: 100vh;
-    width: 100vw;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+    position: fixed;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    font-family:'Titillium Web', sans-serif;
     align-items: center;
-    background: linear-gradient(to top, violet, black);
+    background: linear-gradient(to top, rgb(0, 0, 0), rgb(46, 58, 56));
+      filter: drop-shadow(0 0 20px rgb(185, 152, 221));
+      text-shadow: 
+      0 0 10px rgb(50, 184, 205),
+      0 0 20px yellowgreen,
+      0 0 30px rgb(31, 158, 193),
+      0 0 40px rgb(112, 40, 101),
+      0 0 70px rgb(123, 22, 157),
+      0 0 80px rgb(109, 213, 234),
+      0 0 100px rgb(118, 46, 105);
+    filter: drop-shadow(0 0 20px rgb(185, 152, 221));
+  }
+
+  .logo {
+    font-size: 15rem;
+    height: 16rem;
+    color: rgb(224, 238, 197);
+    text-shadow: 
+      0 0 10px yellowgreen,
+      0 0 20px yellowgreen,
+      0 0 30px yellowgreen,
+      0 0 40px rgb(165, 248, 48),
+      0 0 70px lime,
+      0 0 80px rgb(110, 222, 110),
+      0 0 100px rgb(156, 200, 156);
+    filter: drop-shadow(0 0 20px rgb(185, 152, 221));
   }
   
   .buttonContainer {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 15px;
   }
   
   .button {
-    padding: 15px 40px;
-    font-size: 24px;
+    padding: 10px 40px;
+    font-size: 15px;
     font-weight: bold;
     text-align: center;
     text-decoration: none;

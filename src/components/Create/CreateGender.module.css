@@ -1,0 +1,90 @@
+/* Contenedor de géneros con rotación animada */
+.gendersContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 200px;
+    height: 180px;
+    position: relative;
+    animation: rotate 20s linear infinite; /* Rotación lenta */
+  }
+  .selectedGenderText{
+    margin: 0;
+    font-size: 1.5rem;
+    text-shadow: 
+    0 0 10px rgb(50, 184, 205),
+    0 0 20px yellowgreen,
+    0 0 30px rgb(31, 158, 193),
+    0 0 40px rgb(112, 40, 101),
+    0 0 80px rgb(109, 213, 234);
+  filter: drop-shadow(0 0 20px rgb(185, 152, 221));
+  }
+  
+  /* Géneros con efecto de sombra */
+  .genders {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    border-radius: 360px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    color: rgb(214, 236, 218);
+    font-size: 1.7em;
+    text-shadow: 
+      0 0 10px rgb(50, 184, 205),
+      0 0 20px yellowgreen,
+      0 0 30px rgb(31, 158, 193),
+      0 0 40px rgb(112, 40, 101),
+      0 0 70px rgb(123, 22, 157),
+      0 0 80px rgb(109, 213, 234),
+      0 0 100px rgb(118, 46, 105);
+    filter: drop-shadow(0 0 20px rgb(185, 152, 221));
+    cursor: pointer;
+    transition: transform 0.8s ease, border 0.3s ease;
+  }
+  
+  /* Género seleccionado */
+  .genders.selected {
+    border: 2px solid rgb(205, 230, 211);
+    transform: scale(1.2);
+  }
+  
+  /* Ícono del género */
+  .gender {
+    pointer-events: none; /* Evita clics en el ícono directamente */
+  }
+  
+  /* Pregunta */
+  .question {
+    font-size: 1rem;
+    margin: 0;
+    padding: 0vh 0;
+    text-shadow: 
+      0 0 10px rgb(151, 201, 214);
+  }
+  
+  /* Posiciones de los géneros */
+  .gender0 {
+    transform: translate(-40px, -40px);
+  }
+  
+  .gender1 {
+    transform: translate(40px, -40px);
+  }
+  
+  .gender2 {
+    transform: translate(0, 60px);
+  }
+  
+  /* Animación de rotación circular */
+  @keyframes rotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  

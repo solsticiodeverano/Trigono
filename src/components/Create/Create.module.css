@@ -1,0 +1,127 @@
+/* Contenedor del nombre */
+
+.title{
+    position: fixed;
+    top: 10vh;
+    color: rgb(114, 88, 156);
+    left: 5vw;
+    font-size: 1.5rem;
+    display: flex;
+    gap: 1vw;
+}
+
+.title h3{
+    margin: 0;
+}
+
+.nameContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    position: fixed;
+    bottom: 10vh;
+    left: 5vw;
+    margin: 20px 0;
+    text-align: left;
+  }
+
+  .pin{
+    animation: rotate 18s linear infinite; /* Rotación lenta */
+    border: 1px solid rgba(156, 228, 205, 0.162);
+    width: fit-content;
+    border-radius: 360px;
+    padding: 2px 6px;
+  }
+  
+  .label h4{
+    font-size: 1rem;
+    margin: 0;
+    padding: 0vh 0;
+    text-shadow: 
+      0 0 10px rgb(151, 201, 214);
+  }
+  
+  .nameInput {
+    font-size: 1.8rem;
+    padding: 10px 2vw;
+    border-radius: 45px;
+    border: none;
+    outline: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    text-shadow: 
+      0 0 10px rgb(50, 184, 205),
+      0 0 20px yellowgreen;
+    filter: drop-shadow(0 0 20px rgb(185, 152, 221));
+  }
+  
+  /* Contenedor de colores de piel */
+  .skinContainer {
+    position: fixed;
+    bottom: 10vh;
+    left: 50vw;
+    margin: 20px 0;
+    text-align: center;
+  }
+  
+  .skinColors {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .skinCircle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: transform 0.3s ease, border 0.3s ease;
+    filter: drop-shadow(0 0 10px rgba(0, 0, 0, 0.5));
+  }
+  
+  .skinCircle:hover {
+    transform: scale(1.1);
+  }
+  
+  .skinCircle.selected {
+    border: 2px solid white;
+    transform: scale(1.2);
+  }
+  
+  /* Resumen */
+  .summary {
+    position: fixed;
+    top: 15vh;
+    right: 5vw;
+    margin-top: 30px;
+    text-align: center;
+    color: rgb(200, 224, 210);
+    text-shadow: 
+    0 0 10px rgb(50, 184, 205),
+    0 0 20px yellowgreen,
+    0 0 30px rgb(31, 158, 193),
+    0 0 40px rgb(112, 40, 101),
+    0 0 70px rgb(123, 22, 157),
+    0 0 80px rgb(109, 213, 234),
+    0 0 100px rgb(118, 46, 105);
+  filter: drop-shadow(0 0 20px rgb(185, 152, 221));
+  }
+  
+  .selectedName {
+    margin: 10px 0;
+    font-size: 4rem;
+  }
+  
+
+    
+  /* Animación de rotación circular */
+  @keyframes rotate {
+    from {
+      transform: rotate(360deg);
+    }
+    to {
+      transform: rotate(0deg);
+    }
+  }
+  

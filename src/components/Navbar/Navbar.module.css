@@ -12,10 +12,21 @@
   }
   
   .logo {
-    font-size: 24px;
+    font-size: 2rem;
     font-weight: bold;
     color: white;
     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.7);
+    filter: drop-shadow(0 0 20px rgb(185, 152, 221));
+      text-shadow: 
+      0 0 10px rgb(50, 184, 205),
+      0 0 20px yellowgreen,
+      0 0 30px rgb(31, 158, 193),
+      0 0 40px rgb(112, 40, 101),
+      0 0 70px rgb(123, 22, 157),
+      0 0 80px rgb(109, 213, 234),
+      0 0 100px rgb(118, 46, 105);
+    filter: drop-shadow(0 0 20px rgb(185, 152, 221));
+
   }
   
   .menu {
@@ -23,11 +34,14 @@
     align-items: center;
     gap: 15px;
     color: white;
+    filter: drop-shadow(0 0 20px rgb(185, 152, 221));
+  filter: drop-shadow(0 0 20px rgb(185, 152, 221));
   }
   
   .time, .date {
     font-size: 16px;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+  
   }
   
   .optionsButton {
