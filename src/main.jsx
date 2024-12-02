@@ -12,7 +12,7 @@ import World from './components/World/World.jsx';
 import Create from "./components/Create/Create.jsx";
 import Customize from "./components/Create/Cutomize.jsx";
 import Zone1 from './components/Zones/Zone1.jsx';
-
+import Clock from './components/Pages/Clock.jsx';
 
 
 
@@ -26,7 +26,9 @@ const router = createHashRouter([
       { path:"/world", element:<World/>},
       { path:"/creando", element:<Create/>},
       { path:"/customizando", element:<Customize/>},
-      { path:"/zona1", element:<Zone1/>}
+      { path:"/zona1", element:<Zone1/>},
+      { path:"/transitos", element:<Clock/>},
+
 
 
       

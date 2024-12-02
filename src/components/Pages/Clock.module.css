@@ -1,0 +1,73 @@
+.clockContainer {
+    position: fixed;
+    top: 12vh;
+    left: 15vw;
+    width: 70vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Asegura que el contenedor ocupe toda la altura de la pantalla */
+    color: rgb(214, 236, 218);
+    text-align: center;
+    font-family: Arial, sans-serif;
+  }
+
+  .tableContainer{
+    align-self: baseline;
+
+    width: 50vw; }
+  
+  .clockTitle {
+    font-size: 2.5rem;
+    text-shadow: 
+      0 0 10px rgb(50, 184, 205),
+      0 0 20px yellowgreen,
+      0 0 30px rgb(31, 158, 193),
+      0 0 40px rgb(112, 40, 101),
+      0 0 80px rgb(109, 213, 234);
+   filter: drop-shadow(0 0 20px rgb(185, 152, 221));
+  }
+  
+  .clockTime {
+    width: 20vw;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    align-self: baseline;
+  }
+  
+  .clockTable {
+    width: 80%;
+    justify-self: center;
+    max-width: 600px;
+    border-collapse: collapse;
+    margin-top: 20px;
+    text-align: center;
+    
+  }
+  
+  .clockTable th,
+  .clockTable td {
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 10px;
+  }
+  
+  .clockTable th {
+    background-color: rgba(50, 184, 205, 0.2);
+    font-weight: bold;
+  }
+  
+  .clockTable td {
+    background-color: rgba(50, 184, 205, 0.1);
+  }
+  
+  .clockTable tr:hover {
+    background-color: rgba(50, 184, 205, 0.3);
+  }
+  
+  .clockFooter {
+    margin-top: 20px;
+    font-size: 1rem;
+    color: rgb(151, 201, 214);
+  }
+  
