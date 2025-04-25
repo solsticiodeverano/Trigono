@@ -1,7 +1,7 @@
 // generateGreenScreen.js
 import { getBackgroundColor } from './ZoneHelpers';
 
-const generateGreenScreen = ({ playerPos, screenWidth, screenHeight, fixedTreePositions, animalPositions, pointerRef, tileSize, currentZone }) => {
+const generateGreenScreen = ({ playerPos, screenWidth, screenHeight, fixedTreePositions, animalPositions, pointerPos, tileSize, currentZone }) => {
   const startX = Math.max(0, playerPos.x - Math.floor(screenWidth / 2));
   const startY = Math.max(0, playerPos.y - Math.floor(screenHeight / 2));
   const backgroundColor = getBackgroundColor(currentZone);
@@ -16,7 +16,7 @@ const generateGreenScreen = ({ playerPos, screenWidth, screenHeight, fixedTreePo
       const mapY = startY + y;
       
       const isTree = fixedTreePositions.some(tree => tree.x === mapX && tree.y === mapY);
-      const isTileSelected = pointerRef.current?.getPointerPos().x === mapX && pointerRef.current?.getPointerPos().y === mapY;
+      const isTileSelected = pointerPos.x === mapX && pointerPos.y === mapY; 
       
       row.push(
         <div

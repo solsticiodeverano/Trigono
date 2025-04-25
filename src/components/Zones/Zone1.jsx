@@ -13,11 +13,9 @@ import { loadGameData } from "../../loaders/LoadGameData.js";
 import useKeyboardControls from '../Keys/Keys.jsx'; 
 import Consola from '../Visor/Consola.jsx';
 import Logica from '../Gameplay/Logica.jsx';
-import Pointer from '../Player/Pointer.jsx';
 import zodiacZones from './ZoneData.js'
 import { getInitialAnimalPositions, getBackgroundColor, moveAnimals } from './ZoneHelpers.js';
 import generateGreenScreen from './GenerateGreenScreen.jsx';
-
 
 const Zone1 = ({ setPointerPos }) => {
   // ----- Estado y Variables Iniciales -----
@@ -89,24 +87,31 @@ const Zone1 = ({ setPointerPos }) => {
   
     setAttackPosition(null);
   };
-  
 
   const handleOkPress = () => {
-    if (pointerRef.current) {
-      const pointerPos = pointerRef.current.getPointerPos();
+    if (pointerPos.current) {
+      const pointerPos = pointerPos.current.getPointerPos();
       const objectsAtPointerPosition = getObjectsAtPointerPosition(pointerPos.x, pointerPos.y);
       enviarMensaje(`En la posición del puntero (${pointerPos.x}, ${pointerPos.y}) hay: ${objectsAtPointerPosition}`);
     }
-  };
-  
-  //Posicion Puntero
-
-  const pointerRef = useRef();
-
-
+  };   
 
   // ----- Manejo de Teclado -----
   const [direction, setDirection] = useState('down'); // Dirección por defecto: hacia abajo
+    
+  
+  // ----- Cálculo de la Posición del Puntero -----
+  const getPointerPos = (playerPos, direction) => {
+    switch (direction) {
+      case 'up': return { x: playerPos.x, y: playerPos.y - 1 };
+      case 'down': return { x: playerPos.x, y: playerPos.y + 1 };
+      case 'left': return { x: playerPos.x - 1, y: playerPos.y };
+      case 'right': return { x: playerPos.x + 1, y: playerPos.y };
+      default: return playerPos;
+    }
+  };
+    // Dentro del render o como variable:
+    const pointerPos = getPointerPos(playerPos, direction);
 
   useKeyboardControls({
     onMove: (dx, dy) => {
@@ -151,51 +156,49 @@ const Zone1 = ({ setPointerPos }) => {
     };
   }, [animalPositions]);
 
-  // ----- Generación de Tiles del Mapa -----
-  
-  
   // ----- Información del Jugador -----
   const playerName = "AX"; // Nombre del jugador
   const playerLevel = 1; // Nivel del jugador
 
   return (
     <div className="game-container">
-    <div className="game-map">
-      {generateGreenScreen({
-        playerPos, 
-        screenWidth, 
-        screenHeight, 
-        fixedTreePositions, 
-        animalPositions, 
-        pointerRef, 
-        tileSize, 
-        currentZone
-      })}
-      <Pointer ref={pointerRef} setPointerPos={setPointerPos} playerPos={playerPos} direction={direction} />
-    </div>
+      <div className="game-map">
+        {generateGreenScreen({
+          playerPos, 
+          screenWidth, 
+          screenHeight, 
+          fixedTreePositions, 
+          animalPositions, 
+          pointerPos, // <-- PASALO ASÍ
+          tileSize, 
+          currentZone
+        })}
+      </div>
 
-      <Display 
-        name={playerName} 
-        level={playerLevel} 
-        position={playerPos} 
-        direction={direction} 
-        stats={{
-          tierra: 75,
-          fuego: 60,
-          viento: 45,
-          agua: 80,
-        }}
-        selectedPower={"Llama Sagrada"}
-        isOpen={isDisplayOpen}
-        onClose={() => setIsDisplayOpen(false)}
-        onOpen={() => setIsDisplayOpen(true)}
-      />
+      <Display
+  name={playerName}
+  level={playerLevel}
+  position={playerPos}
+  direction={direction}
+  stats={{
+    tierra: 75,
+    fuego: 60,
+    viento: 45,
+    agua: 80,
+  }}
+  selectedPower={"Llama Sagrada"}
+  isOpen={isDisplayOpen}
+  onClose={() => setIsDisplayOpen(false)}
+  onOpen={() => setIsDisplayOpen(true)}
+  pointerPos={pointerPos} 
+/>
+
 
       <QuestLog />
       <BookScreen allItems={allItems} /> {/* Asegurarse que `allItems` sea un array */}
       <Consola mensajes={mensajesConsola} />
       <Logica enviarMensaje={enviarMensaje} />
-      </div>
+    </div>
   );
 };
 

@@ -1,10 +1,9 @@
 /* eslint-disable react/prop-types */
 import styles from './Display.module.css';
 import CharacterInventory from '../Characters/CharacterInventory'
-import Avatar from '../Player/Avatar' 
 import SelectedPower from '../Characters/SelectedPower';
 import CharacterSkills from '../Characters/CharacterSkills' 
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 
 
@@ -18,8 +17,7 @@ const Display = ({
   isOpen = false,
   onClose,
   onOpen,
-  avatar,  // Componente Avatar
-  mochila // Componente Mochila
+  pointerPos,
 }) => {
   const maxStats = {
     tierra: 100,
@@ -38,7 +36,6 @@ const Display = ({
     }
   };
 
-  const pointerPos = getPointerPos();
   const [selectedWeapon, setSelectedWeapon] = useState(null);
   const [selectedShield, setSelectedShield] = useState(null);
   const [selectedBeast, setSelectedBeast] = useState(null);
