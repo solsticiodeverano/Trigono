@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="300" height="300" viewBox="0 0 300 300">
+  <defs>
+    <style>
+      .cls-1 {
+        opacity: 0.37;
+      }
+    </style>
+  </defs>
+  <image id="CapuchaSombra" class="cls-1" x="123" y="82" width="54" height="36" xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAAkCAYAAADCW8lNAAAC40lEQVRYhd2ZbVMSYRSGrzXKAgUNrcRMy8qmaaovfar//w/szZKa1IxMRwvibaE5M/c6CwO2wMOyeM88suPo7nNxznPe1nv57A0xKwUsa30Bzsbx+FTMULeAh0AemAUKQBH4DDRdPigusDvAqsCWAE+/TwMZWe+bVsvFA8cJlhKErTVtvpcM7IH+bhE4BH4C/qgPd61rwDxwW263EPH+WeA5sA58FODZsIAuwa7o3NjGnghuGOWAV8AvYBs40PkbyEVdgRnQJvAImANmHNzzJvBaltvWZ2SNCnYDeKwzlBGgK3nyghVZsQS8B46i3H9YMHOzDT3UztB1h0DdmpEXWATNCtDSw8lF/zQo2IKCQkFQceZBAwyibE5nb79fgo+yMU9A5vN3FRwmrVV9uXlVL2a9clSwIMot6xytJAAoLE/5z77oHeAd8Ado0wfM07Jv5KlcL8kyA2wp31n0rPYDuycLmetdTThUWDnttwPMqO/LrFlFIS/S7ZKjfNhQdvFCtPkRqoVJy1NOPc+jM6q816YYKqz5oOqxH28VMi+DzosFA9tTshupTUiIOsAs7h8LcNqVDYOZfgNfLwFYuhusJauVJruvkeWpy0iH+6ay2oL2lEIFshy8GAaz4PFdBeU0w9k5W+rudJuaN9QmtCkXmu12RWS1YncLMGWyWrHcazbRUAPndIAZk6qaTe7168c+AHVNm+amAOhAQMfqqBv9wP4Cn4BTNZhJrCUrAioJqCPoXdRB1+WSh5rxFdRNZ+PZd0/5AjgR0H7Qf3UryswjCChFteIbGkVnYgSqKKAdyeX+O2McdMq0q7WpLjvoWsfRlPoKYKd6ppV8kdPQsOOzXRXN65qLuHZPX5bZkcu1Bi0ahgVrK4mbe/7Q+duKCOjrXNQUpIJV1Qqu6/oc6rXSqAPPhlylIv8P3oGlemywpuumlh9yt2bo2kk552qSa4D2TsvOmiV9e5VkrVDYIgZvYOMX8A/Dga0XmnkCWQAAAABJRU5ErkJggg=="/>
+</svg>
