@@ -1,0 +1,6 @@
+[
+    { "id": "ropa-004", "name": "Guantes de Cuero", "description": "Flexibilidad y protección.", "icon": "🧤" },
+    { "id": "ropa-005", "name": "Guantes de Combate", "description": "Para peleadores expertos.", "icon": "🥊" },
+    { "id": "ropa-006", "name": "Guantes de Seda", "description": "Hechos para magos.", "icon": "🧙‍♂️" }
+  ]
+  

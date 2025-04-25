@@ -1,0 +1,6 @@
+[
+    { "id": "tierra-001", "name": "Terremoto", "description": "Sacude el suelo violentamente.", "icon": "🌍" },
+    { "id": "tierra-002", "name": "Piedra Lanza", "description": "Dispara rocas afiladas.", "icon": "🪨" },
+    { "id": "tierra-003", "name": "Muro de Tierra", "description": "Crea una barrera sólida.", "icon": "🧱" }
+  ]
+  

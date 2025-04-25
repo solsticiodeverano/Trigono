@@ -1,0 +1,5 @@
+[
+    { "id": "dagas-001", "name": "Daga Veloz", "description": "Rápida como el viento.", "icon": "🗡️" },
+    { "id": "dagas-002", "name": "Daga Envenenada", "description": "Letal al contacto.", "icon": "🗡️" },
+    { "id": "dagas-003", "name": "Daga de Hueso", "description": "Forjada con huesos.", "icon": "🗡️" }
+]

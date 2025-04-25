@@ -1,0 +1,5 @@
+[
+    { "id": "talisman-001", "name": "Talismán Solar", "description": "Brilla con la luz del sol.", "icon": "🔆" },
+    { "id": "talisman-002", "name": "Talismán de Sombra", "description": "Oculto entre tinieblas.", "icon": "🌑" },
+    { "id": "talisman-003", "name": "Talismán de Suerte", "description": "Trae buena fortuna.", "icon": "🍀" }
+]

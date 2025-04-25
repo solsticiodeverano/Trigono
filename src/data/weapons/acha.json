@@ -1,0 +1,5 @@
+[
+    { "id": "acha-001", "name": "Hacha de Guerra", "description": "Poderosa y pesada.", "icon": "🪓" },
+    { "id": "acha-002", "name": "Hacha Rúnica", "description": "Inscrita con runas antiguas.", "icon": "🪓" },
+    { "id": "acha-003", "name": "Hacha Doble", "description": "Corta por ambos lados.", "icon": "🪓" }
+]

@@ -1,0 +1,6 @@
+[
+    { "id": "viento-001", "name": "Corte de Aire", "description": "Una hoja de viento afilado.", "icon": "🌪️" },
+    { "id": "viento-002", "name": "Velocidad Supersónica", "description": "Aumenta la velocidad drásticamente.", "icon": "💨" },
+    { "id": "viento-003", "name": "Tornado", "description": "Invoca un tornado destructivo.", "icon": "🌀" }
+  ]
+  

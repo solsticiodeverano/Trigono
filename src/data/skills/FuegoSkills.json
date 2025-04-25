@@ -1,0 +1,5 @@
+[
+  { "id": "fuego-001", "name": "Llama Infernal", "description": "Una explosión de fuego.", "icon": "🔥" },
+  { "id": "fuego-002", "name": "Esfera ígnea", "description": "Lanza una bola de fuego.", "icon": "🧯" },
+  { "id": "fuego-003", "name": "Piroescudo", "description": "Escudo de llamas.", "icon": "🛡️" }
+]

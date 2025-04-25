@@ -1,8 +1,9 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/trigono/',
-  plugins: [react()],
-})
+  site: "https://solsticiodeverano.github.io/",
+  base: "Trigono",
+  output: "static",
+
+});

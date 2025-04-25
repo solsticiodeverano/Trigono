@@ -1,0 +1,5 @@
+[
+    { "id": "maza-001", "name": "Maza de Hierro", "description": "Pesada y destructiva.", "icon": "🔨" },
+    { "id": "maza-002", "name": "Maza del Juicio", "description": "Golpea con justicia.", "icon": "🔨" },
+    { "id": "maza-003", "name": "Maza Espinada", "description": "Llena de pinchos.", "icon": "🔨" }
+]

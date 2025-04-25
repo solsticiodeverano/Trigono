@@ -1,0 +1,17 @@
+[
+  { "id": "magicbeast-004", "name": "Grifo Dorado", "description": "Volador y feroz.", "icon": "🦅" },
+  { "id": "magicbeast-005", "name": "Fénix", "description": "Renace del fuego.", "icon": "🐦‍🔥" },
+  { "id": "magicbeast-006", "name": "Dragón Azul", "description": "Maestro de los cielos.", "icon": "🐲" },
+  { "id": "magicbeast-007", "name": "Zorro Fantasmal", "description": "Desaparece en la niebla.", "icon": "🦊" },
+  { "id": "magicbeast-008", "name": "Flamenco de Cristal", "description": "Camina sobre el agua.", "icon": "🦩" },
+  { "id": "magicbeast-009", "name": "Kakuy Eterno", "description": "Habita los sueños.", "icon": "🦉" },
+  { "id": "magicbeast-010", "name": "Elefante Ancestral", "description": "Guardián de la sabiduría.", "icon": "🐘" },
+  { "id": "magicbeast-011", "name": "León Imperial", "description": "Protector de templos.", "icon": "🦁" },
+  { "id": "magicbeast-012", "name": "Oso Polar de Luz", "description": "Habita glaciares mágicos.", "icon": "🐻‍❄️" },
+  { "id": "magicbeast-013", "name": "Pavo Real Místico", "description": "Colores que hipnotizan.", "icon": "🦚" },
+  { "id": "magicbeast-014", "name": "Hidra Sombría", "description": "Cabezas que renacen.", "icon": "🐉" },
+  { "id": "magicbeast-015", "name": "Serpiente de Cristal", "description": "Brilla en la oscuridad.", "icon": "🐍" },
+  { "id": "magicbeast-016", "name": "Cocodrilo de Pantano", "description": "Acecha en silencio.", "icon": "🐊" },
+  { "id": "magicbeast-017", "name": "Tucán Celestial", "description": "Canta profecías.", "icon": "🐦" },
+  { "id": "magicbeast-018", "name": "Tiburón de Tormenta", "description": "Ruge bajo el mar.", "icon": "🦈" }
+]

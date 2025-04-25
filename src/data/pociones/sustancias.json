@@ -1,0 +1,6 @@
+[
+    { "id": "pocion-007", "name": "Elixir Rojo", "description": "Restaura salud.", "icon": "🧪" },
+    { "id": "pocion-008", "name": "Elixir Azul", "description": "Restaura maná.", "icon": "🧫" },
+    { "id": "pocion-009", "name": "Gotas de Velo", "description": "Aumenta evasión.", "icon": "💧" }
+  ]
+  

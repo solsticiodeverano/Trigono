@@ -1,0 +1,5 @@
+[
+    { "id": "hoz-001", "name": "Hoz de Luna", "description": "Brilla con la luna llena.", "icon": "⛏️" },
+    { "id": "hoz-002", "name": "Hoz del Destino", "description": "Se dice que corta el karma.", "icon": "⛏️" },
+    { "id": "hoz-003", "name": "Hoz Antigua", "description": "Repleta de polvo y misterio.", "icon": "⛏️" }
+]

@@ -1,0 +1,6 @@
+[
+    { "id": "baculo-001", "name": "Báculo de Sabiduría", "description": "Canaliza magia ancestral.", "icon": "🔮" },
+    { "id": "baculo-002", "name": "Cetro del Alba", "description": "Despierta el poder interior.", "icon": "☀️" },
+    { "id": "baculo-003", "name": "Báculo de Hielo", "description": "Lanza hechizos congelantes.", "icon": "❄️" }
+  ]
+  

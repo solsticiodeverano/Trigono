@@ -1,0 +1,6 @@
+[
+    { "id": "agua-001", "name": "Tsunami", "description": "Invoca una ola gigante.", "icon": "🌊" },
+    { "id": "agua-002", "name": "Lluvia Curativa", "description": "Cura con gotas místicas.", "icon": "💧" },
+    { "id": "agua-003", "name": "Prisión Acuática", "description": "Encierra al enemigo en agua.", "icon": "🫧" }
+  ]
+  

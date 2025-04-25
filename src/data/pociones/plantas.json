@@ -1,0 +1,6 @@
+[
+    { "id": "pocion-001", "name": "Infusión de Hierbas", "description": "Restaura energía.", "icon": "🌿" },
+    { "id": "pocion-002", "name": "Extracto de Mandrágora", "description": "Revitaliza al instante.", "icon": "🪴" },
+    { "id": "pocion-003", "name": "Té de Flor Azul", "description": "Tranquiliza el alma.", "icon": "🌼" }
+  ]
+  

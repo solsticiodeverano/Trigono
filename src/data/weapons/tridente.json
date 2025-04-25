@@ -1,0 +1,5 @@
+[
+    { "id": "tridente-001", "name": "Tridente Marino", "description": "Domina las mareas.", "icon": "🔱" },
+    { "id": "tridente-002", "name": "Tridente de Hielo", "description": "Congela con su toque.", "icon": "🔱" },
+    { "id": "tridente-003", "name": "Tridente Oscuro", "description": "Cosecha almas.", "icon": "🔱" }
+]

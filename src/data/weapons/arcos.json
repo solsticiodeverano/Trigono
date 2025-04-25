@@ -1,0 +1,6 @@
+[
+    { "id": "arco-001", "name": "Arco de Roble", "description": "Ligero y confiable.", "icon": "🏹" },
+    { "id": "arco-002", "name": "Arco Élfico", "description": "Preciso y elegante.", "icon": "🪶" },
+    { "id": "arco-003", "name": "Arco del Águila", "description": "Golpea desde las alturas.", "icon": "🦅" }
+  ]
+  

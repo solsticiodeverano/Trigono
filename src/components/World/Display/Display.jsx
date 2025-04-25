@@ -34,6 +34,15 @@ const Display = ({ action }) => {
         // No action, do nothing
       }
     }, 1000);
+    
+    const handleToggle = () => {
+      if (isOpen) {
+        onClose();
+      } else {
+        onOpen();
+      }
+    };
+  
 
     return () => clearInterval(interval);
   }, [action]);
@@ -69,20 +78,34 @@ const Display = ({ action }) => {
 
   const gameOver = Object.values(hp).filter(value => value === 0).length >= 2;
 
+  
   return (
-    <div className={styles.display}>
-      <div className={styles.info}>
-        <h1>{NAME}</h1>
-        <h2>Nivel</h2>
-      </div>
-      <div className={styles.bars}>
-        {['water', 'earth', 'fire', 'air'].map((element) => (
-          <div key={element} className={styles.barContainer}>
-            <div className={`${styles.bar} ${getBarColor(element)}`} style={{ width: `${(hp[element] / MAX_HP) * 100}%` }}></div>
+    <div className={`${styles.display} ${isOpen ? styles.open : styles.closed}`}>
+      <button className={styles.toggleButton} onClick={handleToggle}>
+        {isOpen ? '✖' : '☰'}
+      </button>
+
+      {isOpen && (
+        <>
+          <div className={styles.info}>
+            <h1>{NAME}</h1>
+            <h2>Nivel</h2>
           </div>
-        ))}
-      </div>
-      {gameOver && <div className={styles.gameOver}>Game Over</div>}
+
+          <div className={styles.bars}>
+            {['water', 'earth', 'fire', 'air'].map((element) => (
+              <div key={element} className={styles.barContainer}>
+                <div
+                  className={`${styles.bar} ${getBarColor(element)}`}
+                  style={{ width: `${(hp[element] / MAX_HP) * 100}%` }}
+                ></div>
+              </div>
+            ))}
+          </div>
+
+          {gameOver && <div className={styles.gameOver}>Game Over</div>}
+        </>
+      )}
     </div>
   );
 };

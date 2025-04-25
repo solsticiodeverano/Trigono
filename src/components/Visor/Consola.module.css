@@ -1,0 +1,47 @@
+.container {
+  position: fixed;
+  bottom: 0;
+  left: 45vw;
+
+  background-color: #111;
+  color: #eee;
+  padding: 1rem;
+  border-radius: 1rem;
+  max-height: 200px;
+  overflow-y: auto;
+  font-family: monospace;
+  font-size: 0.9rem;
+  box-shadow: 0 0 10px #0ff4;
+}
+
+.msg {
+  margin-bottom: 0.3rem;
+  padding-left: 0.5rem;
+  border-left: 3px solid transparent;
+}
+
+/* Tipos de mensaje */
+.dialogo {
+  color: #aeeaff;
+  border-left-color: #aeeaff;
+}
+
+.objeto {
+  color: #afffaf;
+  border-left-color: #afffaf;
+}
+
+.combate {
+  color: #ff7a7a;
+  border-left-color: #ff7a7a;
+}
+
+.nivel {
+  color: #ffd966;
+  border-left-color: #ffd966;
+}
+
+.sistema {
+  color: #ccc;
+  border-left-color: #ccc;
+}

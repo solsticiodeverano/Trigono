@@ -1,0 +1,89 @@
+.display {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    background: rgba(10, 0, 20, 0.95);
+    color: #ddd;
+    border-left: 2px solid rgba(180, 255, 200, 0.2);
+    border-radius: 10px 0 0 10px;
+    box-shadow:
+      0 0 20px rgba(151, 201, 214, 0.5),
+      0 0 40px rgba(50, 184, 205, 0.3),
+      0 0 60px rgba(123, 22, 157, 0.2);
+    transition: width 0.4s ease;
+    overflow-y: auto;
+    padding: 1rem;
+    z-index: 11;
+    display: flex;
+    flex-direction: row;
+    backdrop-filter: blur(4px);
+  }
+  
+  .closed {
+    width: 300px;
+  }
+  
+  .open {
+    width: 100vw;
+  }
+  
+  .toggleButton {
+    position: fixed;
+    bottom: 5vh;
+    right: 2vw;
+    background: transparent;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #ddd;
+    text-shadow:
+      0 0 10px #7f5af0,
+      0 0 20px #00ffae;
+    transition: transform 0.3s ease;
+  }
+  
+  .toggleButton:hover {
+    transform: scale(1.2);
+  }
+  
+  .info h1, .info h2, .info p,
+  .power h3, .power p,
+  .avatar h3, .mochila h3 {
+    text-shadow:
+      0 0 5px rgb(151, 201, 214),
+      0 0 10px rgb(50, 184, 205),
+      0 0 15px violet;
+  }
+  
+  .barContainer {
+    width: 100%;
+    height: 14px;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 8px rgba(50, 184, 205, 0.3);
+  }
+  
+  .bar {
+    height: 100%;
+    transition: width 0.3s ease;
+    box-shadow:
+      0 0 8px rgba(50, 184, 205, 0.5),
+      0 0 12px rgba(123, 22, 157, 0.3);
+  }
+  
+  .hiddenData, .fixData {
+    flex: 1;
+    padding: 1rem;
+  }
+  
+  .avatar, .mochila {
+    background: rgba(255, 255, 255, 0.02);
+    padding: 1rem;
+    border-radius: 12px;
+    box-shadow:
+      0 0 15px rgba(109, 213, 234, 0.4),
+      0 0 25px rgba(123, 22, 157, 0.3);
+  }
+  

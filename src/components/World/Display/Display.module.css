@@ -49,3 +49,34 @@
     font-weight: bold;
   }
   
+  .display {
+    position: fixed;
+    top: 2vh;
+    left: 1vw;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2vh 2vw;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+    z-index: 10;
+  }
+  
+  .closed {
+    width: 60px;
+    height: 60px;
+    padding: 10px;
+    justify-content: center;
+  }
+  
+  .toggleButton {
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    align-self: flex-end;
+    margin-bottom: 10px;
+  }
+  

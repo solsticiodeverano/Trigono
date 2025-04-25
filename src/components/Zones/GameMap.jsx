@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { ReactComponent as StarterIcon } from './IMG/starter/starter.svg';
 import './GameMap.css'; // Puedes crear un archivo CSS específico si es necesario
 
 const GameMap = ({
@@ -82,17 +83,24 @@ const GameMap = ({
             }}
           >
             {mapX === playerPos.x && mapY === playerPos.y && (
-              <div
-                className="player"
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  fontSize: '60px',
-                  transform: 'translate(-50%, -50%)',
-                }}
-              >
-                🧙‍♀️ {/* Emoticono de la bruja */}
+           <div
+           className="player"
+           style={{
+             position: 'absolute',
+             top: '50%',
+             left: '50%',
+             width: `${tileSize}px`,
+             height: `${tileSize}px`,
+             transform: 'translate(-50%, -50%)',
+           }}
+         >
+           <StarterIcon
+             style={{
+               width: '100%',
+               height: '100%',
+             }}
+           />
+         
                 {showAttack && attackPosition?.x === mapX && attackPosition?.y === mapY && (
                   <div
                     style={{

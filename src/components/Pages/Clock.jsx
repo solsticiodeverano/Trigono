@@ -15,11 +15,21 @@ const Clock = () => {
     { planeta: "Neptuno", signo: "Sagitario", casa: 9 },
     { planeta: "Plutón", signo: "Capricornio", casa: 10 },
   ]);
+  const [astroChartData, setAstroChartData] = useState(null);
 
   useEffect(() => {
+    // Actualizar la hora cada segundo
     const interval = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
+
+    // Solicitar el gráfico astrológico
+    fetch('/api/astro')
+      .then((response) => response.json())
+      .then((data) => {
+        setAstroChartData(data);
+      })
+      .catch((error) => console.error('Error al obtener datos astrológicos:', error));
 
     return () => clearInterval(interval);
   }, []);
@@ -38,31 +48,43 @@ const Clock = () => {
 
   return (
     <div className={styles.clockContainer}>
-        <div className={styles.tableContainer}>
-              <h2 className={styles.clockTitle}>Tránsitos Planetarios</h2>
-      <table className={styles.clockTable}>
-        <thead>
-          <tr>
-            <th>Planeta</th>
-            <th>Signo</th>
-            <th>Casa</th>
-          </tr>
-        </thead>
-        <tbody>
-          {planetaryPositions.map((position, index) => (
-            <tr key={index}>
-              <td>{position.planeta}</td>
-              <td>{position.signo}</td>
-              <td>{position.casa}</td>
+      <div className={styles.tableContainer}>
+        <h2 className={styles.clockTitle}>Tránsitos Planetarios</h2>
+        <table className={styles.clockTable}>
+          <thead>
+            <tr>
+              <th>Planeta</th>
+              <th>Signo</th>
+              <th>Casa</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {planetaryPositions.map((position, index) => (
+              <tr key={index}>
+                <td>{position.planeta}</td>
+                <td>{position.signo}</td>
+                <td>{position.casa}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
 
       <div className={styles.clockTime}>
         <div className={styles.clockTitle}>{formatDate(currentTime)}</div>
         <div className={styles.clockTitle}> {formatTime(currentTime)}</div>
+      </div>
+
+      <div className={styles.astroChart}>
+        {astroChartData ? (
+          <div>
+            {/* Aquí puedes renderizar el gráfico astrológico */}
+            <h3>Gráfico Astrológico</h3>
+            <pre>{JSON.stringify(astroChartData, null, 2)}</pre>
+          </div>
+        ) : (
+          <p>Cargando gráfico astrológico...</p>
+        )}
       </div>
     </div>
   );

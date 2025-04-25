@@ -4,6 +4,7 @@ import { useState } from "react";
 import { ImDiamonds } from "react-icons/im";
 import { GiCorkedTube } from "react-icons/gi";
 import { RiDashboard3Line } from "react-icons/ri";
+import Avatar from '../Player/Avatar.jsx';
 
 
 
@@ -44,7 +45,9 @@ const Create = () => {
 
       {/* Género */}
       <CreateGender />
-
+      <div className={styles.createContainer}>
+      <Avatar selectedSkin={selectedSkin} />
+      </div>
       {/* Color de piel */}
       <div className={styles.skinContainer}>
       <RiDashboard3Line/>

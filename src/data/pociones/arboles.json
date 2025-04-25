@@ -1,0 +1,6 @@
+[
+    { "id": "pocion-004", "name": "Savia Dorada", "description": "Aumenta defensa temporal.", "icon": "🌳" },
+    { "id": "pocion-005", "name": "Resina Oscura", "description": "Reduce el daño recibido.", "icon": "🌲" },
+    { "id": "pocion-006", "name": "Polvo de Corteza", "description": "Cura enfermedades.", "icon": "🍂" }
+  ]
+  

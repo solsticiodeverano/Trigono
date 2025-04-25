@@ -1,30 +1,83 @@
 // src/components/Mochila.jsx
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './Mochila.module.css';
 
-const categories = [
-  'Armas',
-  'Municiones',
-  'Escudos',
-  'Hierbas',
-  'Piedras',
-  'Libros',
+const Acertijos = [
+  'Llave',
+  'Dado',
   'Cartas',
+  'Papiro']
+
+  const Magia = [
+  'Piedras',
+  'Sustancias',
+  'Pociones',
+  'Loción',
+  'Semilla',
+  'Raíz',
+  'Madera',
+  'Hierba',
+  'Fruto',
+  'Flor',
+  'Alimento',
+  'Tierra',
+  'Olla',
+  'Crsital',
+  'Calavera',
+  'Diente',
+  'Colmillo',
+  'Pelo',
+  'Piel',
+  'Hongo',
+  'Pluma',
+  'Polvo',
+  'Elixir',
+  'Hueso',
+  ]
+const Municiones=[
+  'Flechas',
+  'Dagas',
+  'Talismanes',
+]
+const Armas=[
+  'Espada',
+  'Arco',
+]
+const Escudos=[
+  'Escudo',
+  'Casco',
+  'Armadura',
+  'Manto',
+]
+
+  const Libros = [
+  'Libro',
+  'Diplomas',]
+
+  const Mapas =[
+    'Mapa',
+    'Dibujo',
+  ]
+
+  const Vestimenta = [
+  'Capa',
+  'Sombrero',
+  'Brazalete',
+  'Guantes',
+  'Botas',
+  'Medias',
+  'Broche',
   'Magia',
-  'Alimentos',
-  'Objetos',
-  'Vestimenta'
 ];
 
 const items = {
-  Armas: ['Espada', 'Lanza', 'Arco'],
+  Armas: ['Espada', 'Lanza', 'Arco', 'Acha', 'Maza'],
   Municiones: ['Flechas', 'Balas'],
   Escudos: ['Escudo de madera', 'Escudo de hierro'],
   Hierbas: ['Hierba curativa', 'Hierba venenosa'],
   Piedras: ['Piedra mágica', 'Piedra de poder'],
   Libros: ['Libro de hechizos', 'Libro de historia'],
   Cartas: ['Carta de amor', 'Carta de amenaza'],
-  Magia: ['Hechizo de fuego', 'Hechizo de hielo'],
   Alimentos: ['Pan', 'Carne'],
   Objetos: ['Llave', 'Mapa'],
   Vestimenta: ['Casco', 'Armadura']

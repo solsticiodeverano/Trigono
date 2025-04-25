@@ -1,0 +1,19 @@
+{
+    "solarNatal": {
+      "default": true,
+      "requirements": {
+        "weapons": 2,
+        "shields": 2,
+        "animals": 1,
+        "books": 3,
+        "skills": 2,
+        "special": "cumplir_mision_especial"
+      },
+      "completed": false,
+      "next": {
+        "natal": "☀️ Natal Acuario - Ir al colegio Acuario a inscribirse",
+        "transit": "⭐️ Transito de Sol habilitado"
+      }
+    }
+  }
+  

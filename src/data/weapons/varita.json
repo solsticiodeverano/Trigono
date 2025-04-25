@@ -1,0 +1,5 @@
+[
+    { "id": "varita-001", "name": "Varita de Roble", "description": "Estable y poderosa.", "icon": "🪄" },
+    { "id": "varita-002", "name": "Varita de Fénix", "description": "Arde con magia viva.", "icon": "🪄" },
+    { "id": "varita-003", "name": "Varita Rúnica", "description": "Inscrita con símbolos.", "icon": "🪄" }
+]

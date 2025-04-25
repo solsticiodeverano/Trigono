@@ -1,0 +1,20 @@
+.pointer {
+    position: absolute;
+    pointer-events: none;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translate(-50%, -50%); /* Asegura que el puntero esté centrado en el tile */
+  }
+  
+  
+  .pointerCircle {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 2px dashed cyan;
+    box-shadow: 0 0 6px cyan;
+  }
+
+ 

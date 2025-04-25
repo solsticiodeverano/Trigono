@@ -1,0 +1,6 @@
+[
+    { "id": "ropa-001", "name": "Sombrero de Paja", "description": "Protege del sol.", "icon": "👒" },
+    { "id": "ropa-002", "name": "Casco de Hierro", "description": "Aumenta defensa.", "icon": "⛑️" },
+    { "id": "ropa-003", "name": "Tiara Mística", "description": "Amplifica poderes mágicos.", "icon": "👑" }
+  ]
+  

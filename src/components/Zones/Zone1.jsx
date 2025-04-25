@@ -1,20 +1,43 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
+import { useState, useEffect, useRef } from 'react';
 import './Zone1.css';
 import fixedTreeData from './fixedTree.json'; // Importa el archivo JSON
-import Display from './Display'; // Importa el componente Display
-import { initialAnimalPositions } from './AnimalPositions'; // Importa las posiciones iniciales de animales
+import Display from '../Visor/Display.jsx'; // Importa el componente Display
+import { initialAnimalPositionsAries } from './AnimalPositions'; // Importa las posiciones iniciales de animales
 import { mapWidth, mapHeight, tileSize, screenWidth, screenHeight } from './Tile'; // Dimensiones del mapa y de las celdas
+import Avatar from '../Player/Avatar.jsx';
+import QuestLog from '../Gameplay/QuestLog.jsx';
+import BookScreen from '../Gameplay/BookScreen.jsx';
+import { loadGameData } from "../../loaders/LoadGameData.js";
+import useKeyboardControls from '../Keys/Keys.jsx'; 
+import Consola from '../Visor/Consola.jsx';
+import Logica from '../Gameplay/Logica.jsx';
+import Pointer from '../Player/Pointer.jsx';
+import zodiacZones from './ZoneData.js'
+import { getInitialAnimalPositions, getBackgroundColor, moveAnimals } from './ZoneHelpers.js';
+import generateGreenScreen from './GenerateGreenScreen.jsx';
 
-const Zone1 = () => {
-  // Estado para la posición del jugador
+
+const Zone1 = ({ setPointerPos }) => {
+  // ----- Estado y Variables Iniciales -----
   const [playerPos, setPlayerPos] = useState({ x: 11, y: 10 });
+  const [currentZone, setCurrentZone] = useState('Aries');
   const [showAttack, setShowAttack] = useState(false); // Estado para mostrar el ataque
   const [attackPosition, setAttackPosition] = useState(null); // Posición del ataque
   const [canAttack, setCanAttack] = useState(true); // Estado para controlar si se puede atacar
   const fixedTreePositions = fixedTreeData; // Posiciones fijas de árboles
-  const [animalPositions, setAnimalPositions] = useState(initialAnimalPositions); // Estado para posiciones de animales
+  const [animalPositions, setAnimalPositions] = useState(initialAnimalPositionsAries); // Estado para posiciones de animales
+  const allItems = loadGameData() || []; // Asegurarse de que sea un array (vacío si no hay datos)
+  const [isDisplayOpen, setIsDisplayOpen] = useState(false);
+  const [mensajesConsola, setMensajesConsola] = useState([]); // Estado para mensajes de consola
 
-  // Función para verificar si una posición está bloqueada
+  // ----- Funciones de Lógica -----
+  const enviarMensaje = (texto) => {
+    console.log("Mensaje enviado:", texto); // Agrega esto para depurar
+    setMensajesConsola(prev => [...prev, { id: Date.now(), texto }]);
+  };
+
   const isPositionBlocked = (x, y) => {
     return (
       fixedTreePositions.some(tree => tree.x === x && tree.y === y) ||
@@ -22,91 +45,105 @@ const Zone1 = () => {
     );
   };
 
-  // Mover al jugador con verificaciones
+  const getObjectsAtPointerPosition = (x, y) => {
+    const treesAtPosition = fixedTreePositions.filter(tree => tree.x === x && tree.y === y);
+    const animalsAtPosition = animalPositions.filter(animal => animal.x === x && animal.y === y);
+
+    const objects = [];
+    if (treesAtPosition.length > 0) objects.push("Árboles: " + treesAtPosition.length);
+    if (animalsAtPosition.length > 0) objects.push("Animales: " + animalsAtPosition.length);
+
+    return objects.length > 0 ? objects.join(", ") : "Nada aquí.";
+  };
+
   const movePlayer = (dx, dy) => {
     setPlayerPos((prevPos) => {
-      const newX = prevPos.x + dx;
-      const newY = prevPos.y + dy;
-
+      let newX = prevPos.x + dx;
+      let newY = prevPos.y + dy;
+  
+      let currentIndex = zodiacZones.indexOf(currentZone);
+  
+      if (newX < 0) {
+        // Ir a la izquierda: zona anterior
+        const prevZone = zodiacZones[(currentIndex - 1 + zodiacZones.length) % zodiacZones.length];
+        setCurrentZone(prevZone);
+        setAnimalPositions(getInitialAnimalPositions(prevZone));
+        return { x: mapWidth - 1, y: newY };
+      }
+  
+      if (newX >= mapWidth) {
+        // Ir a la derecha: zona siguiente
+        const nextZone = zodiacZones[(currentIndex + 1) % zodiacZones.length];
+        setCurrentZone(nextZone);
+        setAnimalPositions(getInitialAnimalPositions(nextZone));
+        return { x: 0, y: newY };
+      }
+  
       const boundedX = Math.max(0, Math.min(newX, mapWidth - 1));
       const boundedY = Math.max(0, Math.min(newY, mapHeight - 1));
-
-      if (isPositionBlocked(boundedX, boundedY)) {
-        console.log("Movimiento bloqueado en posición:", { x: boundedX, y: boundedY });
-        return prevPos;
-      }
-
-      console.log("Movimiento permitido a posición:", { x: boundedX, y: boundedY });
+  
+      if (isPositionBlocked(boundedX, boundedY)) return prevPos;
+  
       return { x: boundedX, y: boundedY };
     });
-
-    setAttackPosition(null); // Restablecer la posición de ataque al moverse
+  
+    setAttackPosition(null);
   };
+  
 
-  // Manejar teclas de movimiento y ataque
-  const handleKeyDown = (e) => {
-    switch (e.key) {
-      case 'ArrowUp':
-        movePlayer(0, -1);
-        break;
-      case 'ArrowDown':
-        movePlayer(0, 1);
-        break;
-      case 'ArrowLeft':
-        movePlayer(-1, 0);
-        break;
-      case 'ArrowRight':
-        movePlayer(1, 0);
-        break;
-      case 'x': // Ataque
-        if (canAttack) {
-          setShowAttack(true);
-          setAttackPosition({ ...playerPos });
-          setCanAttack(false);
-
-          setTimeout(() => {
-            setShowAttack(false);
-            setCanAttack(true);
-          }, 1000);
-        }
-        break;
-      default:
-        break;
+  const handleOkPress = () => {
+    if (pointerRef.current) {
+      const pointerPos = pointerRef.current.getPointerPos();
+      const objectsAtPointerPosition = getObjectsAtPointerPosition(pointerPos.x, pointerPos.y);
+      enviarMensaje(`En la posición del puntero (${pointerPos.x}, ${pointerPos.y}) hay: ${objectsAtPointerPosition}`);
     }
   };
+  
+  //Posicion Puntero
 
-  // Mover a los animales de manera aleatoria
-  const moveAnimals = () => {
-    setAnimalPositions((prevPositions) =>
-      prevPositions.map(animal => {
-        const direction = Math.random() < 0.5 ? 'x' : 'y';
-        const step = Math.random() < 0.5 ? 1 : -1;
-        const newX = direction === 'x' ? animal.x + step : animal.x;
-        const newY = direction === 'y' ? animal.y + step : animal.y;
+  const pointerRef = useRef();
 
-        const boundedX = Math.max(0, Math.min(newX, mapWidth - 1));
-        const boundedY = Math.max(0, Math.min(newY, mapHeight - 1));
 
-        if (!isPositionBlocked(boundedX, boundedY)) {
-          return { ...animal, x: boundedX, y: boundedY };
-        }
-        return animal;
-      })
-    );
-  };
 
-  // Listeners de teclado
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-    };
-  }, []);
+  // ----- Manejo de Teclado -----
+  const [direction, setDirection] = useState('down'); // Dirección por defecto: hacia abajo
 
-  // Intervalos para mover animales
+  useKeyboardControls({
+    onMove: (dx, dy) => {
+      if (dx === 1) setDirection('right');
+      else if (dx === -1) setDirection('left');
+      else if (dy === 1) setDirection('down');
+      else if (dy === -1) setDirection('up');
+      
+      movePlayer(dx, dy);
+    },
+    onAttack: () => {
+      if (canAttack) {
+        setShowAttack(true);
+        setAttackPosition({ ...playerPos });
+        setCanAttack(false);
+
+        setTimeout(() => {
+          setShowAttack(false);
+          setCanAttack(true);
+        }, 1000);
+      }
+    },
+    onJump: () => { /* Implementar salto si es necesario */ },
+    onOk: handleOkPress, // Vincula el mensaje aquí
+    onBack: () => { /* Lógica de regresar si es necesario */ },
+    onSkill: (skillId) => { /* Lógica de habilidad */ },
+    onProtect: () => { /* Lógica para protegerse */ },
+    onRun: () => { /* Lógica para correr */ }
+  });
+
   useEffect(() => {
     const timers = animalPositions.map(animal =>
-      setInterval(() => moveAnimals(), animal.speed)
+      setInterval(() => {
+        setAnimalPositions((prevPositions) =>
+          moveAnimals(prevPositions, isPositionBlocked)  // Usa la función importada
+        );
+      }, animal.speed)
     );
 
     return () => {
@@ -114,63 +151,51 @@ const Zone1 = () => {
     };
   }, [animalPositions]);
 
-  // Generar tiles del mapa
-  const generateScreen = () => {
-    const screenTiles = [];
-    const startX = Math.max(0, playerPos.x - Math.floor(screenWidth / 2));
-    const startY = Math.max(0, playerPos.y - Math.floor(screenHeight / 2));
-
-    for (let y = 0; y < screenHeight; y++) {
-      const row = [];
-      for (let x = 0; x < screenWidth; x++) {
-        const mapX = startX + x;
-        const mapY = startY + y;
-
-        const isTree = fixedTreePositions.some(tree => tree.x === mapX && tree.y === mapY);
-
-        row.push(
-          <div
-            key={`${mapX}-${mapY}`}
-            className="tile"
-            style={{
-              backgroundColor: isTree ? 'darkgreen' : 'green',
-              border: '1px solid black',
-              width: `${tileSize}px`,
-              height: `${tileSize}px`,
-              position: 'relative',
-            }}
-          >
-            {mapX === playerPos.x && mapY === playerPos.y && (
-              <div className="player">
-                🧙‍♀️
-                {showAttack && attackPosition?.x === mapX && attackPosition?.y === mapY && (
-                  <div className="attack">⚡</div>
-                )}
-              </div>
-            )}
-            {isTree && <div className="tree">🌳</div>}
-            {animalPositions.map(animal =>
-              animal.x === mapX && animal.y === mapY && (
-                <div key={animal.id} className="animal">{animal.emoji}</div>
-              )
-            )}
-          </div>
-        );
-      }
-      screenTiles.push(<div key={y} className="tile-row">{row}</div>);
-    }
-    return screenTiles;
-  };
-
-  // Información del jugador
+  // ----- Generación de Tiles del Mapa -----
+  
+  
+  // ----- Información del Jugador -----
   const playerName = "AX"; // Nombre del jugador
   const playerLevel = 1; // Nivel del jugador
 
   return (
     <div className="game-container">
-      <Display name={playerName} level={playerLevel} position={playerPos} />
-      <div className="game-map">{generateScreen()}</div>
+    <div className="game-map">
+      {generateGreenScreen({
+        playerPos, 
+        screenWidth, 
+        screenHeight, 
+        fixedTreePositions, 
+        animalPositions, 
+        pointerRef, 
+        tileSize, 
+        currentZone
+      })}
+      <Pointer ref={pointerRef} setPointerPos={setPointerPos} playerPos={playerPos} direction={direction} />
     </div>
+
+      <Display 
+        name={playerName} 
+        level={playerLevel} 
+        position={playerPos} 
+        direction={direction} 
+        stats={{
+          tierra: 75,
+          fuego: 60,
+          viento: 45,
+          agua: 80,
+        }}
+        selectedPower={"Llama Sagrada"}
+        isOpen={isDisplayOpen}
+        onClose={() => setIsDisplayOpen(false)}
+        onOpen={() => setIsDisplayOpen(true)}
+      />
+
+      <QuestLog />
+      <BookScreen allItems={allItems} /> {/* Asegurarse que `allItems` sea un array */}
+      <Consola mensajes={mensajesConsola} />
+      <Logica enviarMensaje={enviarMensaje} />
+      </div>
   );
 };
 

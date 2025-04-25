@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 const Player = ({ playerPos, setPlayerPos, showAttack, setShowAttack, attackPosition, setAttackPosition, canAttack, setCanAttack, isPositionBlocked }) => {
   

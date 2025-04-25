@@ -1,0 +1,5 @@
+[
+    { "id": "intrumento-001", "name": "Flauta Mágica", "description": "Controla el viento.", "icon": "🎶" },
+    { "id": "intrumento-002", "name": "Tambor Rítmico", "description": "Convoca espíritus.", "icon": "🥁" },
+    { "id": "intrumento-003", "name": "Lira Encantada", "description": "Sus notas sanan.", "icon": "🎼" }
+]

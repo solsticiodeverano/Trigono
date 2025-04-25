@@ -1,0 +1,5 @@
+[
+    { "id": "turifero-001", "name": "Turífero Sagrado", "description": "Llena el aire de incienso.", "icon": "🪔" },
+    { "id": "turifero-002", "name": "Turífero de Plata", "description": "Brilla intensamente.", "icon": "🪔" },
+    { "id": "turifero-003", "name": "Turífero Antiguo", "description": "Usado por los sabios.", "icon": "🪔" }
+]

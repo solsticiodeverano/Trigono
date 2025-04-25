@@ -17,7 +17,14 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    border: 1px solid rgba(255,255,255,0.1); /* Para debug visual */
+    background-color: rgba(255, 0, 0, 0.1); /* Añade un color para ver la cuadrícula */
   }
+
+  .selected-tile {
+    box-shadow: 0 0 10px lightblue; /* Opcional: Para resaltar aún más */
+  }
+  
   
   .tile-row {
     display: flex;
@@ -27,12 +34,16 @@
     position: absolute;
     width: 60px;
     height: 60px;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
+    z-index: 5;
   }
+  
   .game-map {
     position: relative; /* Permitir que los elementos hijos se posicionen absolutamente en relación a este contenedor */
-    width: 100%; /* O el tamaño deseado */
-    height: auto; /* O el tamaño deseado */
+    width: calc(100% * screenWidth); /* Ajusta con el valor real */
+    height: calc(100% * screenHeight); /* Ajusta con el valor real */
     display: flex;
     flex-direction: column; /* Organizar los elementos de la cuadrícula */
   }

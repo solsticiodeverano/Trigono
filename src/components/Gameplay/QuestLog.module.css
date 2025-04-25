@@ -1,15 +1,108 @@
+/* QuestLog.module.css */
+
 .questLog {
-    padding: 20px;
-    background-color: #f4f4f4;
-    border-radius: 8px;
-  }
-  
-  .activeQuest {
-    color: blue;
-  }
-  
-  .completedQuest {
-    color: gray;
-    text-decoration: line-through;
-  }
-  
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 250px;
+  background-color: #333;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.closed {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.closed span {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.closed button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.closed button:hover {
+  background-color: #45a049;
+}
+
+.open {
+  display: flex;
+  flex-direction: column;
+}
+
+.open button {
+  background-color: #f44336;
+  border: none;
+  color: white;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 15px;
+}
+
+.open button:hover {
+  background-color: #da190b;
+}
+
+.missionTypeButtons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.missionTypeButtons button {
+  background-color: #2196F3;
+  border: none;
+  color: white;
+  padding: 10px;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  flex-grow: 1;
+  margin-right: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.missionTypeButtons button:last-child {
+  margin-right: 0;
+}
+
+.missionTypeButtons button:hover {
+  background-color: #0b7dda;
+}
+
+.astros {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.astros div {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.astros div:nth-child(odd) {
+  color: #ffeb3b;
+}
+
+.astros div:nth-child(even) {
+  color: #ff5722;
+}

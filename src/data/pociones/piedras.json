@@ -1,0 +1,6 @@
+[
+    { "id": "pi1", "name": "Piedra lunar", "description": "Mejora habilidades mágicas.", "icon": "🌕", "category": "potions" },
+    { "id": "pi2", "name": "Cristal rojo", "description": "Otorga energía extra.", "icon": "🔴", "category": "potions" },
+    { "id": "pi3", "name": "Ámbar", "description": "Protege contra maldiciones.", "icon": "🟡", "category": "potions" }
+  ]
+  
