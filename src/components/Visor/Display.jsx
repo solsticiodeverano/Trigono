@@ -1,23 +1,24 @@
+// Display.jsx
 /* eslint-disable react/prop-types */
 import styles from './Display.module.css';
 import CharacterInventory from '../Characters/CharacterInventory'
 import SelectedPower from '../Characters/SelectedPower';
-import CharacterSkills from '../Characters/CharacterSkills' 
+import CharacterSkills from '../Characters/CharacterSkills'
 import { useState } from 'react';
-
-
 
 const Display = ({
   name = "AX",
   level = 1,
   position = { x: 0, y: 0 },
-  direction = "down", // ← ¡Agregado aquí!
+  direction = "down",
   stats = { tierra: 100, fuego: 80, viento: 60, agua: 90 },
   selectedPower,
   isOpen = false,
   onClose,
   onOpen,
   pointerPos,
+  inventory,
+  setInventory
 }) => {
   const maxStats = {
     tierra: 100,
@@ -47,10 +48,10 @@ const Display = ({
 
   const getBarColor = (stat) => {
     switch (stat) {
-      case "tierra": return "#8B4513"; // marrón
-      case "fuego": return "#FF4500"; // rojo fuego
-      case "viento": return "#1E90FF"; // azul viento
-      case "agua": return "#00CED1"; // celeste
+      case "tierra": return "#8B4513";
+      case "fuego": return "#FF4500";
+      case "viento": return "#1E90FF";
+      case "agua": return "#00CED1";
       default: return "gray";
     }
   };
@@ -72,59 +73,62 @@ const Display = ({
       <button className={styles.toggleButton} onClick={handleToggle}>
         {isOpen ? '✖' : '☰'}
       </button>
-<section  className={styles.hiddenData}>
-         {/* Mostrar Avatar y Mochila solo cuando está abierto */}
-         {isOpen && (
-        <>
-          <div className={styles.avatar}>
-          <CharacterSkills
-  selectedSkills={selectedSkills}
-  setSelectedSkills={setSelectedSkills}
-/>            {avatar}
-          </div>
-          <div className={styles.mochila}>
-            <h3>Mochila</h3>
-            <CharacterInventory
-  onEquip={(item) => {
-    if (item.category === "weapons") setSelectedWeapon(item);
-    else if (item.category === "shield") setSelectedShield(item);
-    else if (item.category === "beast") setSelectedBeast(item);
-  }}
-/>          </div>
-        </>
-      )}
-      </section>
-  <section  className={styles.fixData}>
-      <div className={styles.info}>
-        <h1>{name}</h1>
-        <h2>Nivel: {level}</h2>
-        <p>Posición: ({position.x}, {position.y})</p>
-        <p>Pointer: ({pointerPos.x}, {pointerPos.y})</p>
-      </div>
-  
-      <div className={styles.bars}>
-        {Object.keys(stats).map((stat) =>
-          renderBar(stat, stats[stat], maxStats[stat])
+      <section className={styles.hiddenData}>
+        {isOpen && (
+          <>
+            <div className={styles.avatar}>
+              <CharacterSkills
+                selectedSkills={selectedSkills}
+                setSelectedSkills={setSelectedSkills}
+              />
+              {}
+            </div>
+            <div className={styles.mochila}>
+              <h3>Mochila</h3>
+              <CharacterInventory
+                inventory={inventory}
+                setInventory={setInventory}
+                onEquip={(item) => {
+                  if (item.category === "weapons") setSelectedWeapon(item);
+                  else if (item.category === "shield") setSelectedShield(item);
+                  else if (item.category === "beast") setSelectedBeast(item);
+                }}
+              />
+            </div>
+          </>
         )}
-      </div>
-  
-      {selectedPower && (
-        <div className={styles.power}>
-         <SelectedPower
-  selectedWeapon={selectedWeapon}
-  selectedShield={selectedShield}
-  selectedBeast={selectedBeast}
-  selectedSkills={selectedSkills}
-/>
-
-        </div>
-      )}
       </section>
-  
-   
+      <section className={styles.fixData}>
+        <div className={styles.info}>
+          <h1>{name}</h1>
+          <h2>Nivel: {level}</h2>
+          <p>Posición: ({position.x}, {position.y})</p>
+          <p>Pointer: ({pointerPos.x}, {pointerPos.y})</p>
+        </div>
+
+        <div className={styles.bars}>
+          {Object.keys(stats).map((stat) =>
+            renderBar(stat, stats[stat], maxStats[stat])
+          )}
+        </div>
+
+        {selectedPower && (
+          <div className={styles.power}>
+            <SelectedPower
+              selectedWeapon={selectedWeapon}
+              selectedShield={selectedShield}
+              selectedBeast={selectedBeast}
+              selectedSkills={selectedSkills}
+            />
+
+          </div>
+        )}
+      </section>
+
+
     </div>
-    
+
   );
-};  
+};
 
 export default Display;

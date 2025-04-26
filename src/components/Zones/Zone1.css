@@ -24,6 +24,21 @@
   .selected-tile {
     box-shadow: 0 0 10px lightblue; /* Opcional: Para resaltar aún más */
   }
+  .energy-bar-container {
+    position: absolute;
+    top: -5px;
+    left: 5%;
+    width: 90%;
+    height: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: hidden;
+  }
+  
+  .energy-bar {
+    width: 100%;
+    height: 100%;
+    background-color: green;
+  }
   
   
   .tile-row {

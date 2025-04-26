@@ -1,6 +1,7 @@
 [
     { "id": "escudo-001", "name": "Escudo de Madera", "description": "Básico pero útil.", "icon": "🛡️" },
-    { "id": "escudo-002", "name": "Escudo Solar", "description": "Brilla con el sol.", "icon": "☀️" },
-    { "id": "escudo-003", "name": "Escudo de Dragón", "description": "Resiste el fuego.", "icon": "🐉" }
+    { "id": "escudo-002", "name": "Escudo Solar", "description": "Brilla con el sol.", "icon": "🛡️" },
+    { "id": "escudo-003", "name": "Escudo de Dragón", "description": "Resiste el fuego.", "icon": "🛡️" }
   ]
+  
   

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect } from 'react';
 
 const Player = ({ playerPos, setPlayerPos, showAttack, setShowAttack, attackPosition, setAttackPosition, canAttack, setCanAttack, isPositionBlocked }) => {

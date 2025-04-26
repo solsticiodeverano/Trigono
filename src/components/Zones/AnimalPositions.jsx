@@ -67,7 +67,11 @@ export const initialAnimalPositionsAcuario = [
 ];
 
 export const initialAnimalPositionsPiscis = [
-  { id: 34, x: 35, y: 35, emoji: '🦭', speed: 8900 }, // Foca (ficticio)
-  { id: 35, x: 40, y: 40, emoji: '🦡', speed: 8700 }, // Tejón (ficticio)
+  { id: 34, x: 110, y: 5, emoji: '🦈', speed: 8900 }, // Foca (ficticio)
+  { id: 34, x: 100, y: 5, emoji: '🦈', speed: 8900 }, // Foca (ficticio)
+  { id: 34, x: 80, y: 5, emoji: '🦈', speed: 8900 }, // Foca (ficticio)
+  { id: 34, x: 110, y: 8, emoji: '🦈', speed: 8900 }, // Foca (ficticio)
+  { id: 34, x: 110, y: 8, emoji: '🦈', speed: 8900 }, // Foca (ficticio)
+  { id: 35, x: 40, y: 5, emoji: '🦡', speed: 8700 }, // Tejón (ficticio)
   { id: 36, x: 45, y: 35, emoji: '🦈', speed: 9100 }, // Tiburón Azul (ficticio)
 ];

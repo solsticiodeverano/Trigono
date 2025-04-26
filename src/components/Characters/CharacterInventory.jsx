@@ -1,3 +1,4 @@
+// CharacterInventory.jsx
 import { useState } from "react";
 import styles from "./CharacterInventory.module.css";
 
@@ -11,22 +12,26 @@ const categories = [
   { id: "beast", icon: "🦠", label: "Bestias" },
 ];
 
-const initialInventory = [
-  { id: 1, name: "Espada Rúnica", icon: "🗡️", description: "Una espada mágica con runas antiguas.", category: "weapons" },
-  { id: 2, name: "Escudo de Hierro", icon: "🛡️", description: "Protección resistente contra ataques físicos.", category: "shield" },
-  { id: 3, name: "Mapa del Bosque", icon: "🗺️", description: "Revela rutas ocultas del bosque encantado.", category: "maps" },
-  { id: 4, name: "Poción Curativa", icon: "🧪", description: "Restaura salud.", category: "potions" },
-  { id: 5, name: "Perro Guardián", icon: "🐶", description: "Una bestia leal que te protege.", category: "beast" },
-];
 
-const CharacterInventory = ({ onEquip }) => {
+const CharacterInventory = ({ inventory, setInventory, onEquip }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
-  const [inventory, setInventory] = useState(initialInventory);
   const [selectedItem, setSelectedItem] = useState(null);
 
   const filteredInventory = selectedCategory === "all"
     ? inventory
     : inventory.filter(item => item.category === selectedCategory);
+
+  const handleUseItem = () => {
+    if (!selectedItem) return;
+    alert(`Usaste ${selectedItem.name}`);
+  };
+
+  const handleDropItem = () => {
+    if (!selectedItem) return;
+    setInventory(prev => prev.filter(item => item.id !== selectedItem.id));
+    setSelectedItem(null);
+    alert(`Tiraste ${selectedItem.name}`);
+  };
 
   return (
     <div className={styles.inventoryWrapper}>
@@ -36,6 +41,7 @@ const CharacterInventory = ({ onEquip }) => {
             key={cat.id}
             className={`${styles.categoryButton} ${selectedCategory === cat.id ? styles.active : ""}`}
             onClick={() => setSelectedCategory(cat.id)}
+            title={cat.label}
           >
             {cat.icon}
           </button>
@@ -46,8 +52,9 @@ const CharacterInventory = ({ onEquip }) => {
         {filteredInventory.map(item => (
           <div
             key={item.id}
-            className={styles.itemCard}
+            className={`${styles.itemCard} ${selectedItem?.id === item.id ? styles.selected : ""}`}
             onClick={() => setSelectedItem(item)}
+            title={item.name}
           >
             <span className={styles.itemEmoji}>{item.icon}</span>
           </div>
@@ -59,9 +66,9 @@ const CharacterInventory = ({ onEquip }) => {
           <h3>{selectedItem.name}</h3>
           <p>{selectedItem.description}</p>
           <div className={styles.itemActions}>
-            <button>Usar</button>
+            <button onClick={handleUseItem}>Usar</button>
             <button onClick={() => onEquip && onEquip(selectedItem)}>Equipar</button>
-            <button>Tirar</button>
+            <button onClick={handleDropItem}>Tirar</button>
           </div>
         </aside>
       )}

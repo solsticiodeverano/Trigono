@@ -1,201 +1,293 @@
+// Zone1.jsx
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Zone1.css';
-import fixedTreeData from './fixedTree.json'; // Importa el archivo JSON
-import Display from '../Visor/Display.jsx'; // Importa el componente Display
-import { initialAnimalPositionsAries } from './AnimalPositions'; // Importa las posiciones iniciales de animales
-import { mapWidth, mapHeight, tileSize, screenWidth, screenHeight } from './Tile'; // Dimensiones del mapa y de las celdas
+import fixedTreeData from './fixedTree.json';
+import Display from '../Visor/Display.jsx';
+import {
+  mapWidth,
+  mapHeight,
+  tileSize,
+  screenWidth,
+  screenHeight,
+} from './Tile';
 import Avatar from '../Player/Avatar.jsx';
 import QuestLog from '../Gameplay/QuestLog.jsx';
 import BookScreen from '../Gameplay/BookScreen.jsx';
-import { loadGameData } from "../../loaders/LoadGameData.js";
-import useKeyboardControls from '../Keys/Keys.jsx'; 
+import { loadGameData } from '../../loaders/LoadGameData.js';
 import Consola from '../Visor/Consola.jsx';
 import Logica from '../Gameplay/Logica.jsx';
-import zodiacZones from './ZoneData.js'
-import { getInitialAnimalPositions, getBackgroundColor, moveAnimals } from './ZoneHelpers.js';
-import generateGreenScreen from './GenerateGreenScreen.jsx';
+import zodiacZones from './ZoneData.js';
+import {
+  getInitialAnimalPositions,
+  moveAnimals,
+} from './ZoneHelpers.js';
+import GenerateGreenScreen from './GenerateGreenScreen.jsx';
+import { generateTreeMaze } from './generateTreeMaze.js';
+import PlayerController from './PlayerController.jsx';
+import itemPositionsData from './itemPositionsData';
 
 const Zone1 = ({ setPointerPos }) => {
-  // ----- Estado y Variables Iniciales -----
+  // ----- State and Initial Variables -----
   const [playerPos, setPlayerPos] = useState({ x: 11, y: 10 });
   const [currentZone, setCurrentZone] = useState('Aries');
-  const [showAttack, setShowAttack] = useState(false); // Estado para mostrar el ataque
-  const [attackPosition, setAttackPosition] = useState(null); // Posición del ataque
-  const [canAttack, setCanAttack] = useState(true); // Estado para controlar si se puede atacar
-  const fixedTreePositions = fixedTreeData; // Posiciones fijas de árboles
-  const [animalPositions, setAnimalPositions] = useState(initialAnimalPositionsAries); // Estado para posiciones de animales
-  const allItems = loadGameData() || []; // Asegurarse de que sea un array (vacío si no hay datos)
+  const [showAttack, setShowAttack] = useState(false);
+  const [attackPosition, setAttackPosition] = useState(null);
+  const [canAttack, setCanAttack] = useState(true);
+  const [fixedTreePositions, setFixedTreePositions] = useState([]);
+  const [fertileTiles, setFertileTiles] = useState([]);
+  const [houses, setHouses] = useState([]);
+  const [direction, setDirection] = useState('down');
+  const [animalPositions, setAnimalPositions] = useState([]);
+  const allItems = loadGameData() || [];
   const [isDisplayOpen, setIsDisplayOpen] = useState(false);
-  const [mensajesConsola, setMensajesConsola] = useState([]); // Estado para mensajes de consola
+  const [mensajesConsola, setMensajesConsola] = useState([]);
+  const [selectedPower, setSelectedPower] = useState('Llama Sagrada');
+  const [showQuestLog, setShowQuestLog] = useState(false);
+  const [itemPositions, setItemPositions] = useState([]);
+  const [inventory, setInventory] = useState([]);
 
-  // ----- Funciones de Lógica -----
-  const enviarMensaje = (texto) => {
-    console.log("Mensaje enviado:", texto); // Agrega esto para depurar
-    setMensajesConsola(prev => [...prev, { id: Date.now(), texto }]);
+  // ----- Logic Functions -----
+  const enviarMensaje = ({ texto, tipo = 'info', icono = 'ℹ️' }) => {
+    setMensajesConsola((prev) => [...prev, { id: Date.now(), texto, tipo, icono }]);
+  };
+
+  const isTileFertile = (x, y, fertileTiles) => {
+    return fertileTiles.some((tile) => tile.x === x && tile.y === y);
   };
 
   const isPositionBlocked = (x, y) => {
     return (
-      fixedTreePositions.some(tree => tree.x === x && tree.y === y) ||
-      animalPositions.some(animal => animal.x === x && animal.y === y)
+      fixedTreePositions.some((tree) => tree.x === x && tree.y === y) ||
+      animalPositions.some((animal) => animal.x === x && animal.y === y) ||
+      houses.some(
+        (house) =>
+          x >= house.x && x <= house.x + 1 && y >= house.y && y <= house.y + 1
+      )
     );
   };
 
   const getObjectsAtPointerPosition = (x, y) => {
-    const treesAtPosition = fixedTreePositions.filter(tree => tree.x === x && tree.y === y);
-    const animalsAtPosition = animalPositions.filter(animal => animal.x === x && animal.y === y);
+    const treesAtPosition = fixedTreePositions.filter((tree) => tree.x === x && tree.y === y);
+    const animalsAtPosition = animalPositions.filter(
+      (animal) => animal.x === x && animal.y === y
+    );
+    const itemsAtPosition = itemPositions.filter(item => item.x === x && item.y === y);
 
     const objects = [];
-    if (treesAtPosition.length > 0) objects.push("Árboles: " + treesAtPosition.length);
-    if (animalsAtPosition.length > 0) objects.push("Animales: " + animalsAtPosition.length);
+    if (treesAtPosition.length > 0) objects.push('Trees: ' + treesAtPosition.length);
+    if (animalsAtPosition.length > 0) objects.push('Animals: ' + animalsAtPosition.length);
+    if (itemsAtPosition.length > 0) objects.push(`Items: ${itemsAtPosition.map(item => item.id).join(', ')}`);
 
-    return objects.length > 0 ? objects.join(", ") : "Nada aquí.";
+    return objects.length > 0 ? objects.join(', ') : 'Nothing here.';
   };
-
-  const movePlayer = (dx, dy) => {
-    setPlayerPos((prevPos) => {
-      let newX = prevPos.x + dx;
-      let newY = prevPos.y + dy;
-  
-      let currentIndex = zodiacZones.indexOf(currentZone);
-  
-      if (newX < 0) {
-        // Ir a la izquierda: zona anterior
-        const prevZone = zodiacZones[(currentIndex - 1 + zodiacZones.length) % zodiacZones.length];
-        setCurrentZone(prevZone);
-        setAnimalPositions(getInitialAnimalPositions(prevZone));
-        return { x: mapWidth - 1, y: newY };
-      }
-  
-      if (newX >= mapWidth) {
-        // Ir a la derecha: zona siguiente
-        const nextZone = zodiacZones[(currentIndex + 1) % zodiacZones.length];
-        setCurrentZone(nextZone);
-        setAnimalPositions(getInitialAnimalPositions(nextZone));
-        return { x: 0, y: newY };
-      }
-  
-      const boundedX = Math.max(0, Math.min(newX, mapWidth - 1));
-      const boundedY = Math.max(0, Math.min(newY, mapHeight - 1));
-  
-      if (isPositionBlocked(boundedX, boundedY)) return prevPos;
-  
-      return { x: boundedX, y: boundedY };
-    });
-  
-    setAttackPosition(null);
-  };
-
-  const handleOkPress = () => {
-    if (pointerPos.current) {
-      const pointerPos = pointerPos.current.getPointerPos();
-      const objectsAtPointerPosition = getObjectsAtPointerPosition(pointerPos.x, pointerPos.y);
-      enviarMensaje(`En la posición del puntero (${pointerPos.x}, ${pointerPos.y}) hay: ${objectsAtPointerPosition}`);
-    }
-  };   
-
-  // ----- Manejo de Teclado -----
-  const [direction, setDirection] = useState('down'); // Dirección por defecto: hacia abajo
-    
-  
-  // ----- Cálculo de la Posición del Puntero -----
-  const getPointerPos = (playerPos, direction) => {
-    switch (direction) {
-      case 'up': return { x: playerPos.x, y: playerPos.y - 1 };
-      case 'down': return { x: playerPos.x, y: playerPos.y + 1 };
-      case 'left': return { x: playerPos.x - 1, y: playerPos.y };
-      case 'right': return { x: playerPos.x + 1, y: playerPos.y };
-      default: return playerPos;
-    }
-  };
-    // Dentro del render o como variable:
-    const pointerPos = getPointerPos(playerPos, direction);
-
-  useKeyboardControls({
-    onMove: (dx, dy) => {
-      if (dx === 1) setDirection('right');
-      else if (dx === -1) setDirection('left');
-      else if (dy === 1) setDirection('down');
-      else if (dy === -1) setDirection('up');
-      
-      movePlayer(dx, dy);
-    },
-    onAttack: () => {
-      if (canAttack) {
-        setShowAttack(true);
-        setAttackPosition({ ...playerPos });
-        setCanAttack(false);
-
-        setTimeout(() => {
-          setShowAttack(false);
-          setCanAttack(true);
-        }, 1000);
-      }
-    },
-    onJump: () => { /* Implementar salto si es necesario */ },
-    onOk: handleOkPress, // Vincula el mensaje aquí
-    onBack: () => { /* Lógica de regresar si es necesario */ },
-    onSkill: (skillId) => { /* Lógica de habilidad */ },
-    onProtect: () => { /* Lógica para protegerse */ },
-    onRun: () => { /* Lógica para correr */ }
-  });
 
   useEffect(() => {
-    const timers = animalPositions.map(animal =>
-      setInterval(() => {
-        setAnimalPositions((prevPositions) =>
-          moveAnimals(prevPositions, isPositionBlocked)  // Usa la función importada
-        );
-      }, animal.speed)
+    if (!currentZone) return;
+
+    enviarMensaje({
+      texto: `You have entered the ${currentZone} zone!`,
+      tipo: 'info',
+      icono: '📍',
+    });
+  }, [currentZone]);
+
+  useEffect(() => {
+    // Generate fertile tiles
+    const newFertileTiles = [];
+    for (let x = 0; x < mapWidth; x++) {
+      for (let y = 0; y < mapHeight; y++) {
+        if (Math.random() < 0.9) {
+          newFertileTiles.push({ x, y });
+        }
+      }
+    }
+    setFertileTiles(newFertileTiles);
+
+    // Generate houses
+    const newHouses = [];
+    for (let i = 0; i < 6; i++) {
+      let houseX, houseY;
+      do {
+        houseX = Math.floor(Math.random() * (mapWidth - 1));
+        houseY = Math.floor(Math.random() * (mapHeight - 1));
+      } while (
+        newHouses.some((house) => house.x === houseX && house.y === houseY) ||
+        !isTileFertile(houseX, houseY, newFertileTiles) ||
+        !isTileFertile(houseX + 1, houseY, newFertileTiles) ||
+        !isTileFertile(houseX, houseY + 1, newFertileTiles) ||
+        !isTileFertile(houseX + 1, houseY + 1, newFertileTiles)
+      );
+      newHouses.push({ x: houseX, y: houseY });
+    }
+    setHouses(newHouses);
+  }, [currentZone]);
+
+  useEffect(() => {
+    const mazeTrees = generateTreeMaze(120, 30, currentZone, fertileTiles, houses);
+    setFixedTreePositions(mazeTrees);
+  }, [currentZone, fertileTiles, houses]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setFixedTreePositions((prevTrees) => {
+        return prevTrees.map((tree) => {
+          const newEnergy = Math.min(tree.energy + 1, 150);
+          return { ...tree, energy: newEnergy };
+        });
+      });
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    // Load animals based on the current zone
+    setAnimalPositions(getInitialAnimalPositions(currentZone));
+  }, [currentZone]);
+
+  // ----- Pointer Position Calculation -----
+  const getPointerPos = (playerPos, direction) => {
+    switch (direction) {
+      case 'up':
+        return { x: playerPos.x, y: playerPos.y - 1 };
+      case 'down':
+        return { x: playerPos.x, y: playerPos.y + 1 };
+      case 'left':
+        return { x: playerPos.x - 1, y: playerPos.y };
+      case 'right':
+        return { x: playerPos.x + 1, y: playerPos.y };
+      default:
+        return playerPos;
+    }
+  };
+
+  const pointerPos = getPointerPos(playerPos, direction);
+
+  useEffect(() => {
+    const timers = animalPositions.map(
+      (animal) =>
+        setInterval(() => {
+          setAnimalPositions((prevPositions) =>
+            moveAnimals(prevPositions, isPositionBlocked)
+          );
+        }, animal.speed)
     );
 
     return () => {
-      timers.forEach(timer => clearInterval(timer));
+      timers.forEach((timer) => clearInterval(timer));
     };
   }, [animalPositions]);
 
-  // ----- Información del Jugador -----
-  const playerName = "AX"; // Nombre del jugador
-  const playerLevel = 1; // Nivel del jugador
+  // ----- Player Information -----
+  const playerName = 'AX';
+  const playerLevel = 1;
+
+  const handleOkPress = () => {
+    const itemToPickUp = itemPositions.find(item => item.x === pointerPos.x && item.y === pointerPos.y);
+
+    if (itemToPickUp) {
+      // Find the full item data from allItems
+      const fullItemData = allItems.find(item => item.id === itemToPickUp.id);
+
+      if (fullItemData) {
+        // Add the full item data to the inventory
+        setInventory(prevInventory => [...prevInventory, fullItemData]);
+
+        // Remove the item from the map
+        setItemPositions(prevItems => prevItems.filter(item => item.id !== itemToPickUp.id));
+
+        enviarMensaje({
+          texto: `Picked up ${fullItemData.name} (${fullItemData.id})!`,
+          tipo: 'success',
+          icono: '📦'
+        });
+      } else {
+        enviarMensaje({
+          texto: `Item data not found for ${itemToPickUp.id}`,
+          tipo: 'error',
+          icono: '⚠️'
+        });
+      }
+    } else {
+      const objectsAtPointerPosition = getObjectsAtPointerPosition(pointerPos.x, pointerPos.y);
+      enviarMensaje({
+        texto: `The pointer is at position (${pointerPos.x}, ${pointerPos.y}) and there are: ${objectsAtPointerPosition}`,
+        tipo: 'info',
+        icono: 'ℹ️'
+      });
+    }
+  };
+  // ----- Items Logic -----
+  useEffect(() => {
+    // Define los objetos para cada zona usando los datos importados
+    setItemPositions(itemPositionsData[currentZone] || []);
+  }, [currentZone]);
 
   return (
     <div className="game-container">
+      {/* PlayerController Component */}
+      <PlayerController
+        initialPosition={{ x: 11, y: 10 }}
+        mapWidth={mapWidth}
+        mapHeight={mapHeight}
+        isPositionBlocked={isPositionBlocked}
+        setCurrentZone={setCurrentZone}
+        zodiacZones={zodiacZones}
+        getInitialAnimalPositions={getInitialAnimalPositions}
+        setAttackPosition={setAttackPosition}
+        setDirection={setDirection}
+        setPointerPos={setPointerPos}
+        setPlayerPos={setPlayerPos}
+        setAnimalPositions={setAnimalPositions}
+        setShowAttack={setShowAttack}
+        setCanAttack={setCanAttack}
+        pointerPos={pointerPos}
+        setFixedTreePositions={setFixedTreePositions}
+        currentZone={currentZone}
+        handleOkPress={handleOkPress} // Pass handleOkPress
+      />
+
       <div className="game-map">
-        {generateGreenScreen({
-          playerPos, 
-          screenWidth, 
-          screenHeight, 
-          fixedTreePositions, 
-          animalPositions, 
-          pointerPos, // <-- PASALO ASÍ
-          tileSize, 
-          currentZone
-        })}
+        <GenerateGreenScreen
+          playerPos={playerPos}
+          screenWidth={screenWidth}
+          screenHeight={screenHeight}
+          fixedTreePositions={fixedTreePositions}
+          animalPositions={animalPositions}
+          pointerPos={pointerPos}
+          tileSize={tileSize}
+          currentZone={currentZone}
+          fertileTiles={fertileTiles}
+          houses={houses}
+          itemPositions={itemPositions}
+          allItems={allItems} // Pass allItems to GenerateGreenScreen
+        />
       </div>
 
       <Display
-  name={playerName}
-  level={playerLevel}
-  position={playerPos}
-  direction={direction}
-  stats={{
-    tierra: 75,
-    fuego: 60,
-    viento: 45,
-    agua: 80,
-  }}
-  selectedPower={"Llama Sagrada"}
-  isOpen={isDisplayOpen}
-  onClose={() => setIsDisplayOpen(false)}
-  onOpen={() => setIsDisplayOpen(true)}
-  pointerPos={pointerPos} 
-/>
+        name={playerName}
+        level={playerLevel}
+        position={playerPos}
+        direction={direction}
+        stats={{
+          tierra: 75,
+          fuego: 60,
+          viento: 45,
+          agua: 80,
+        }}
+        selectedPower={selectedPower}
+        isOpen={isDisplayOpen}
+        onClose={() => setIsDisplayOpen(false)}
+        onOpen={() => setIsDisplayOpen(true)}
+        pointerPos={pointerPos}
+        inventory={inventory}
+        setInventory={setInventory}
+      />
 
-
-      <QuestLog />
-      <BookScreen allItems={allItems} /> {/* Asegurarse que `allItems` sea un array */}
+      <QuestLog inventory={inventory} />
+      <BookScreen allItems={allItems} />
       <Consola mensajes={mensajesConsola} />
       <Logica enviarMensaje={enviarMensaje} />
     </div>
