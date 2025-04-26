@@ -1,4 +1,3 @@
-// GenerateGreenScreen.jsx
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { getBackgroundColor } from './ZoneHelpers';
@@ -16,6 +15,8 @@ const treeIcons = {
   fir: '🌲',        // Capricornio
   palm: '🌴',       // Acuario
   baobab: '🌳',     // Piscis
+  seed: '🌱',       // Semilla (único icono para todas las zonas)
+  plant: '🌿',      // Planta (puede ser un icono genérico o por zona)
   default: '🌳'
 };
 
@@ -181,7 +182,7 @@ const GenerateGreenScreen = ({
                   style={{
                     width: `${(tree.energy / 150) * 100}%`,
                     height: '100%',
-                    backgroundColor: 'green',
+                    backgroundColor: tree.type === 'seed' ? 'yellowgreen' : 'green',
                   }}
                 />
               </div>

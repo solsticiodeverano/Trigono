@@ -1,4 +1,3 @@
-// Zone1.jsx
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import React, { useState, useEffect, useRef } from 'react';
@@ -27,6 +26,78 @@ import GenerateGreenScreen from './GenerateGreenScreen.jsx';
 import { generateTreeMaze } from './generateTreeMaze.js';
 import PlayerController from './PlayerController.jsx';
 import itemPositionsData from './itemPositionsData';
+
+// Nueva función para intentar lanzar semilla
+function trySeedRelease(trees, fertileTiles, width, height) {
+  const directions = [
+    { dx: 0, dy: -1 },
+    { dx: 0, dy: 1 },
+    { dx: -1, dy: 0 },
+    { dx: 1, dy: 0 },
+  ];
+
+  const newSeeds = [];
+  const updatedTrees = trees.map(tree => {
+    // Solo árboles que no hayan dado semilla
+    if (
+      tree.energy >= 150 &&
+      tree.type !== 'seed' &&
+      tree.type !== 'plant' &&
+      !tree.hasGivenSeed // NUEVO CHEQUEO
+    ) {
+      if (Math.random() < 0.5) {
+        const shuffledDirections = directions.sort(() => 0.5 - Math.random());
+        for (let dir of shuffledDirections) {
+          const nx = tree.x + dir.dx;
+          const ny = tree.y + dir.dy;
+          if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+          const occupied = trees.some(t => t.x === nx && t.y === ny);
+          if (!occupied) {
+            newSeeds.push({ x: nx, y: ny, type: 'seed', energy: 5 });
+            // Marcar árbol como que ya dio semilla
+            return { ...tree, hasGivenSeed: true, seedCooldownUntil: Date.now() + 2 * 60 * 1000 // 2 minutos en milisegundos
+            };
+          }
+        }
+      }
+    }
+    return tree;
+  });
+
+  // Agregar las semillas nuevas a la lista de árboles
+  return updatedTrees.concat(newSeeds);
+}
+// Nueva función para actualizar energía y evolución de semillas
+function updateSeedsAndPlants(trees, fertileTiles, treeType) {
+  return trees.map(tree => {
+    if (tree.type === 'seed') {
+      const newEnergy = Math.min(tree.energy + 1, 100);
+
+      if (newEnergy >= 100) {
+        if (Math.random() < 0.01) {
+          const fertile = fertileTiles.some(tile => tile.x === tree.x && tile.y === tree.y);
+          if (fertile) {
+            return { ...tree, type: 'plant', energy: newEnergy };
+          } else {
+            return null; // La semilla muere si no está en tierra fértil
+          }
+        } else {
+          return null; // La semilla muere
+        }
+      } else {
+        return { ...tree, energy: newEnergy };
+      }
+    } else if (tree.type === 'plant') {
+      if (tree.energy >= 150) {
+        return { ...tree, type: treeType, energy: 150 }; // Se convierte en árbol
+      } else {
+        const newEnergy = Math.min(tree.energy + 1, 150);
+        return { ...tree, energy: newEnergy }; // Aumenta la energía de la planta
+      }
+    }
+    return tree;
+  }).filter(tree => tree !== null);
+}
 
 const Zone1 = ({ setPointerPos }) => {
   // ----- State and Initial Variables -----
@@ -59,7 +130,7 @@ const Zone1 = ({ setPointerPos }) => {
 
   const isPositionBlocked = (x, y) => {
     return (
-      fixedTreePositions.some((tree) => tree.x === x && tree.y === y) ||
+      fixedTreePositions.some((tree) => tree.x === x && tree.y === y && tree.type !== 'seed' && tree.type !== 'plant') ||
       animalPositions.some((animal) => animal.x === x && animal.y === y) ||
       houses.some(
         (house) =>
@@ -69,18 +140,69 @@ const Zone1 = ({ setPointerPos }) => {
   };
 
   const getObjectsAtPointerPosition = (x, y) => {
-    const treesAtPosition = fixedTreePositions.filter((tree) => tree.x === x && tree.y === y);
+    const treesAtPosition = fixedTreePositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'tree');
+    const seedsAtPosition = fixedTreePositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'seed');
+    const plantsAtPosition = fixedTreePositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'plant');
     const animalsAtPosition = animalPositions.filter(
       (animal) => animal.x === x && animal.y === y
     );
     const itemsAtPosition = itemPositions.filter(item => item.x === x && item.y === y);
 
     const objects = [];
-    if (treesAtPosition.length > 0) objects.push('Trees: ' + treesAtPosition.length);
-    if (animalsAtPosition.length > 0) objects.push('Animals: ' + animalsAtPosition.length);
-    if (itemsAtPosition.length > 0) objects.push(`Items: ${itemsAtPosition.map(item => item.id).join(', ')}`);
+    if (treesAtPosition.length > 0) objects.push(`Trees: ${treesAtPosition.length}`);
+    if (seedsAtPosition.length > 0) objects.push(`Seeds: ${seedsAtPosition.length}`);
+    if (plantsAtPosition.length > 0) objects.push(`Plants: ${plantsAtPosition.length}`);
+    if (animalsAtPosition.length > 0) objects.push(`Animals: ${animalsAtPosition.length}`);
+    if (itemsAtPosition.length > 0) objects.push(`Items: ${itemPositions.map(item => item.id).join(', ')}`);
 
     return objects.length > 0 ? objects.join(', ') : 'Nothing here.';
+  };
+
+  const handleAttack = () => {
+    const updatedTrees = fixedTreePositions.map(tree => ({ ...tree }));
+    const treeIndex = updatedTrees.findIndex(tree => tree.x === pointerPos.x && tree.y === pointerPos.y);
+
+    if (treeIndex !== -1) {
+      const attackedTree = updatedTrees[treeIndex];
+      attackedTree.energy -= 50;
+
+      if (attackedTree.energy <= 0) {
+        updatedTrees.splice(treeIndex, 1);
+        enviarMensaje({ texto: 'Tree/Seed/Plant destroyed!', tipo: 'success', icono: '🔥' });
+      } else {
+        enviarMensaje({ texto: 'Attacked Tree/Seed/Plant!', tipo: 'info', icono: '⚔️' });
+      }
+      setFixedTreePositions(updatedTrees);
+    } else {
+      enviarMensaje({ texto: 'No Tree/Seed/Plant to attack!', tipo: 'warning', icono: '⚠️' });
+    }
+  };
+
+  const handleOkPress = () => {
+    const itemToPickUp = itemPositions.find(item => item.x === pointerPos.x && item.y === pointerPos.y);
+
+    if (itemToPickUp) {
+      const fullItemData = allItems.find(item => item.id === itemToPickUp.id);
+
+      if (fullItemData) {
+        setInventory(prevInventory => [...prevInventory, fullItemData]);
+        setItemPositions(prevItems => prevItems.filter(item => item.id !== itemToPickUp.id));
+
+        enviarMensaje({
+          texto: `Picked up ${fullItemData.name} (${fullItemData.id})!`,
+          tipo: 'success',
+          icono: '📦'
+        });
+      } else {
+        enviarMensaje({
+          texto: `Item data not found for ${itemToPickUp.id}`,
+          tipo: 'error',
+          icono: '⚠️'
+        });
+      }
+    } else {
+      handleAttack();
+    }
   };
 
   useEffect(() => {
@@ -94,7 +216,6 @@ const Zone1 = ({ setPointerPos }) => {
   }, [currentZone]);
 
   useEffect(() => {
-    // Generate fertile tiles
     const newFertileTiles = [];
     for (let x = 0; x < mapWidth; x++) {
       for (let y = 0; y < mapHeight; y++) {
@@ -105,7 +226,6 @@ const Zone1 = ({ setPointerPos }) => {
     }
     setFertileTiles(newFertileTiles);
 
-    // Generate houses
     const newHouses = [];
     for (let i = 0; i < 6; i++) {
       let houseX, houseY;
@@ -131,23 +251,29 @@ const Zone1 = ({ setPointerPos }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      setFixedTreePositions(prevTrees => {
+        return trySeedRelease(prevTrees, fertileTiles, mapWidth, mapHeight);
+      });
+
       setFixedTreePositions((prevTrees) => {
-        return prevTrees.map((tree) => {
-          const newEnergy = Math.min(tree.energy + 1, 150);
-          return { ...tree, energy: newEnergy };
+        const updatedTrees = prevTrees.map((tree) => {
+          if (tree.type !== 'seed') {
+            const newEnergy = Math.min(tree.energy + 1, 150);
+            return { ...tree, energy: newEnergy };
+          }
+          return tree;
         });
+        return updateSeedsAndPlants(updatedTrees, fertileTiles, getTreeTypeForZone(currentZone));
       });
     }, 500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [fertileTiles, currentZone]);
 
   useEffect(() => {
-    // Load animals based on the current zone
     setAnimalPositions(getInitialAnimalPositions(currentZone));
   }, [currentZone]);
 
-  // ----- Pointer Position Calculation -----
   const getPointerPos = (playerPos, direction) => {
     switch (direction) {
       case 'up':
@@ -178,52 +304,33 @@ const Zone1 = ({ setPointerPos }) => {
     return () => {
       timers.forEach((timer) => clearInterval(timer));
     };
-  }, [animalPositions]);
+  }, [animalPositions, isPositionBlocked]);
 
-  // ----- Player Information -----
   const playerName = 'AX';
   const playerLevel = 1;
 
-  const handleOkPress = () => {
-    const itemToPickUp = itemPositions.find(item => item.x === pointerPos.x && item.y === pointerPos.y);
-
-    if (itemToPickUp) {
-      // Find the full item data from allItems
-      const fullItemData = allItems.find(item => item.id === itemToPickUp.id);
-
-      if (fullItemData) {
-        // Add the full item data to the inventory
-        setInventory(prevInventory => [...prevInventory, fullItemData]);
-
-        // Remove the item from the map
-        setItemPositions(prevItems => prevItems.filter(item => item.id !== itemToPickUp.id));
-
-        enviarMensaje({
-          texto: `Picked up ${fullItemData.name} (${fullItemData.id})!`,
-          tipo: 'success',
-          icono: '📦'
-        });
-      } else {
-        enviarMensaje({
-          texto: `Item data not found for ${itemToPickUp.id}`,
-          tipo: 'error',
-          icono: '⚠️'
-        });
-      }
-    } else {
-      const objectsAtPointerPosition = getObjectsAtPointerPosition(pointerPos.x, pointerPos.y);
-      enviarMensaje({
-        texto: `The pointer is at position (${pointerPos.x}, ${pointerPos.y}) and there are: ${objectsAtPointerPosition}`,
-        tipo: 'info',
-        icono: 'ℹ️'
-      });
-    }
-  };
-  // ----- Items Logic -----
   useEffect(() => {
-    // Define los objetos para cada zona usando los datos importados
     setItemPositions(itemPositionsData[currentZone] || []);
   }, [currentZone]);
+
+  const getTreeTypeForZone = (zone) => {
+    const treeTypesByZone = {
+      Aries: 'pine',
+      Tauro: 'oak',
+      Géminis: 'birch',
+      Cáncer: 'willow',
+      Leo: 'maple',
+      Virgo: 'spruce',
+      Libra: 'cedar',
+      Escorpio: 'redwood',
+      Sagitario: 'cypress',
+      Capricornio: 'fir',
+      Acuario: 'palm',
+      Piscis: 'baobab',
+    };
+
+    return treeTypesByZone[zone] || 'default';
+  };
 
   return (
     <div className="game-container">
