@@ -220,16 +220,16 @@ const Server = ({ setPointerPos }) => {
     }
   };
 
-  const handleOkPress = () => {
+  const handleGetPress = () => {
     const itemToPickUp = itemPositions.find(item => item.x === pointerPos.x && item.y === pointerPos.y);
-
+  
     if (itemToPickUp) {
       const fullItemData = allItems.find(item => item.id === itemToPickUp.id);
-
+  
       if (fullItemData) {
         setInventory(prevInventory => [...prevInventory, fullItemData]);
         setItemPositions(prevItems => prevItems.filter(item => item.id !== itemToPickUp.id));
-
+  
         enviarMensaje({
           texto: `Picked up ${fullItemData.name} (${fullItemData.id})!`,
           tipo: 'success',
@@ -243,10 +243,16 @@ const Server = ({ setPointerPos }) => {
         });
       }
     } else {
-      handleAttack();
+      enviarMensaje({
+        texto: `No item to pick up here!`,
+        tipo: 'warning',
+        icono: '⚠️'
+      });
     }
   };
+  
 
+  const handleOkPress = () => {handleAttack}
 
   //DISPLAYER CONSOLA
   useEffect(() => {
@@ -398,7 +404,10 @@ const Server = ({ setPointerPos }) => {
   pointerPos={pointerPos}
   setFixedTreePositions={setFixedTreePositions}
   currentZone={currentZone}
-  handleOkPress={handleOkPress} // Pass handleOkPress
+  handleAttack={handleAttack}
+  handleGetPress={handleGetPress}
+  canAttack={canAttack}
+
 />
 
       <div className="game-map">

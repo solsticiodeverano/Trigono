@@ -18,7 +18,9 @@ const PlayerController = ({
   pointerPos,
   setFixedTreePositions,
   currentZone,
-  handleOkPress,
+  handleAttack,
+  handleGetPress, // para agarrar objetos
+
 }) => {
   const [playerPos, setInternalPlayerPos] = useState(initialPosition);
   const [direction, setInternalDirection] = useState('down');
@@ -95,11 +97,12 @@ const PlayerController = ({
       }
     },
     onJump: () => {},
-    onOk: handleOkPress, // Call handleOkPress from Server
+    onOk: handleAttack, // Call handleOkPress from Server
     onBack: () => {},
     onSkill: (skillId) => {},
     onProtect: () => {},
     onRun: () => {},
+    onGet: handleGetPress,  // Ahora SÍ va a funcionar
   });
 
   useEffect(() => {

@@ -1,7 +1,6 @@
 // components/Keys.jsx
 import { useEffect } from 'react';
-
-const useKeyboardControls = ({ onMove, onAttack, onJump, onOk, onBack, onSkill, onProtect, onRun })  => {
+const useKeyboardControls = ({ onMove, onAttack, onGet, onJump, onOk, onBack, onSkill, onProtect, onRun })  => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       switch (e.key) {
@@ -21,7 +20,6 @@ const useKeyboardControls = ({ onMove, onAttack, onJump, onOk, onBack, onSkill, 
           onJump?.();
           break;
         case 'x':
-          // Asegúrate de llamar onOk cuando se presiona 'x'
           onOk?.();
           break;
         case 'z':
@@ -39,6 +37,9 @@ const useKeyboardControls = ({ onMove, onAttack, onJump, onOk, onBack, onSkill, 
         case 'd':
           onAttack?.();
           break;
+          case 'g':
+            onGet?.();
+            break;
         default:
           break;
       }
@@ -48,7 +49,7 @@ const useKeyboardControls = ({ onMove, onAttack, onJump, onOk, onBack, onSkill, 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [onMove, onAttack, onJump, onOk, onBack, onSkill, onProtect, onRun]);
+  }, [onMove, onAttack, onGet, onJump, onOk, onBack, onSkill, onProtect, onRun]);
 };
 
 export default useKeyboardControls;
