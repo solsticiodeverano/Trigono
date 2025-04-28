@@ -39,7 +39,17 @@
     height: 100%;
     background-color: green;
   }
+  .energy-bar-bg{    position: absolute;
+    top: -5px;
+    left: 5%;
+    width: 90%;
+    height: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: hidden;}  
   
+  .energy-bar-fg{ width: 100%;
+    height: 100%;
+    background-color: green;}
   
   .tile-row {
     display: flex;

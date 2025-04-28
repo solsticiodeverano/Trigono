@@ -34,10 +34,10 @@ const useKeyboardControls = ({ onMove, onAttack, onGet, onJump, onOk, onBack, on
         case 'Control':
           onProtect?.();
           break;
-        case 'd':
+        case 'g':
           onAttack?.();
           break;
-          case 'g':
+          case 'd':
             onGet?.();
             break;
         default:

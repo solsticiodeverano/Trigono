@@ -201,24 +201,66 @@ const Server = ({ setPointerPos }) => {
   //ACCIONES FUNCIONES TECLADO
 
   const handleAttack = () => {
+    let attacked = false;
+    // Árboles
+
     const updatedTrees = fixedTreePositions.map(tree => ({ ...tree }));
-    const treeIndex = updatedTrees.findIndex(tree => tree.x === pointerPos.x && tree.y === pointerPos.y);
-
-    if (treeIndex !== -1) {
-      const attackedTree = updatedTrees[treeIndex];
-      attackedTree.energy -= 50;
-
-      if (attackedTree.energy <= 0) {
-        updatedTrees.splice(treeIndex, 1);
+  const updatedAnimals = animalPositions.map(animal => ({ ...animal }));
+  const updatedNPCs = NPCPositions.map(npc => ({ ...npc }));
+    // Atacar árboles/plants/semillas en la posición
+  for (let i = updatedTrees.length - 1; i >= 0; i--) {
+    const tree = updatedTrees[i];
+    if (tree.x === pointerPos.x && tree.y === pointerPos.y) {
+      tree.energy -= 50;
+      attacked = true;
+      if (tree.energy <= 0) {
+        updatedTrees.splice(i, 1);
         enviarMensaje({ texto: 'Tree/Seed/Plant destroyed!', tipo: 'success', icono: '🔥' });
       } else {
         enviarMensaje({ texto: 'Attacked Tree/Seed/Plant!', tipo: 'info', icono: '⚔️' });
       }
-      setFixedTreePositions(updatedTrees);
-    } else {
-      enviarMensaje({ texto: 'No Tree/Seed/Plant to attack!', tipo: 'warning', icono: '⚠️' });
     }
-  };
+  }
+
+  // Atacar animales en la posición
+  for (let i = updatedAnimals.length - 1; i >= 0; i--) {
+    const animal = updatedAnimals[i];
+    if (animal.x === pointerPos.x && animal.y === pointerPos.y) {
+      animal.energy -= 50;
+      attacked = true;
+      if (animal.energy <= 0) {
+        updatedAnimals.splice(i, 1);
+        enviarMensaje({ texto: 'Animal defeated!', tipo: 'success', icono: '🦊' });
+      } else {
+        enviarMensaje({ texto: 'Animal hit!', tipo: 'info', icono: '⚔️' });
+      }
+    }
+  }
+
+  // Atacar NPCs en la posición
+  for (let i = updatedNPCs.length - 1; i >= 0; i--) {
+    const npc = updatedNPCs[i];
+    if (npc.x === pointerPos.x && npc.y === pointerPos.y) {
+      npc.energy -= 50;
+      attacked = true;
+      if (npc.energy <= 0) {
+        updatedNPCs.splice(i, 1);
+        enviarMensaje({ texto: 'NPC defeated!', tipo: 'success', icono: '🧑' });
+      } else {
+        enviarMensaje({ texto: 'NPC hit!', tipo: 'info', icono: '⚔️' });
+      }
+    }
+  }
+
+  // Actualizar estados si atacó algo
+  if (attacked) {
+    setFixedTreePositions(updatedTrees);
+    setAnimalPositions(updatedAnimals);
+    setNPCPositions(updatedNPCs);
+  } else {
+    enviarMensaje({ texto: 'No hay nada que atacar aquí!', tipo: 'warning', icono: '⚠️' });
+  }
+};
 
   const handleGetPress = () => {
     const itemToPickUp = itemPositions.find(item => item.x === pointerPos.x && item.y === pointerPos.y);
@@ -311,6 +353,22 @@ const Server = ({ setPointerPos }) => {
     setNPCPositions(getInitialNPCPositions(currentZone));
   }, [currentZone]);
 
+  useEffect(() => {
+    const energyInterval = setInterval(() => {
+      setAnimalPositions(prev => prev.map(animal => ({
+        ...animal,
+        energy: Math.min(animal.energy + 2, 100)
+      })));
+      
+      setNPCPositions(prev => prev.map(npc => ({
+        ...npc,
+        energy: Math.min(npc.energy + 1, 120)
+      })));
+    }, 5000);
+  
+    return () => clearInterval(energyInterval);
+  }, []);
+
   const getPointerPos = (playerPos, direction) => {
     switch (direction) {
       case 'up':
@@ -328,35 +386,15 @@ const Server = ({ setPointerPos }) => {
 
   const pointerPos = getPointerPos(playerPos, direction);
 
-  useEffect(() => {
-    const timers = animalPositions.map(
-      (animal) =>
-        setInterval(() => {
-          setAnimalPositions((prevPositions) =>
-            moveAnimals(prevPositions, isPositionBlocked)
-          );
-        }, animal.speed)
-    );
+ // Reemplazar los useEffects de movimiento con este sistema mejorado
+useEffect(() => {
+  const movementInterval = setInterval(() => {
+    setAnimalPositions(prev => moveAnimals(prev, isPositionBlocked));
+    setNPCPositions(prev => moveNPC(prev, isPositionBlocked));
+  }, 1000); // Intervalo único para todos
 
-    return () => {
-      timers.forEach((timer) => clearInterval(timer));
-    };
-  }, [animalPositions, isPositionBlocked]);
-
-  useEffect(() => {
-      const timers = NPCPositions.map(
-          (NPC) =>
-          setInterval(() => {
-              setNPCPositions((prevPositions) =>
-                  moveNPC(prevPositions, isPositionBlocked)
-              );
-          }, NPC.speed)
-      );
-
-      return () => {
-          timers.forEach((timer) => clearInterval(timer));
-      };
-  }, [NPCPositions, isPositionBlocked]);
+  return () => clearInterval(movementInterval);
+}, [isPositionBlocked]);
 
   const playerName = 'AX';
   const playerLevel = 1;

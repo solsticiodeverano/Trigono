@@ -13,9 +13,9 @@ export const NPCTypes = {
    
    
    export const initialNPCPositionsAries = [
-    { id: 1, x: 5, y: 5, type: APPRENTICE, emoji: '🧕', speed: 7000 }, // Aprendiz
-    { id: 2, x: 10, y: 10, type: SECURITY, emoji: '💂', speed: 12000 }, // SECURITY
-    { id: 3, x: 15, y: 5, type: TRIBE_MEMBER, emoji: '🧝‍♀️', speed: 8000 }, // TRIBE_MEMBER
+    { id: 1, x: 10, y: 8, type: APPRENTICE, energy: 100, emoji: '🧕', speed: 7000 }, // Aprendiz
+    { id: 2, x: 10, y: 15, type: SECURITY, energy: 100, emoji: '💂', speed: 12000 }, // SECURITY
+    { id: 3, x: 15, y: 40, type: TRIBE_MEMBER, energy: 100, emoji: '🧝‍♀️', speed: 8000 }, // TRIBE_MEMBER
    ];
    
    

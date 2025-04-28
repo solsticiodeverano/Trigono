@@ -19,20 +19,33 @@ import { mapWidth, mapHeight } from './Tile'; // Importa las dimensiones del map
 
 export const moveAnimals = (animalPositions, isPositionBlocked) => {
   return animalPositions.map(animal => {
-    const direction = Math.random() < 0.5 ? 'x' : 'y';
-    const step = Math.random() < 0.5 ? 1 : -1;
-    const newX = direction === 'x' ? animal.x + step : animal.x;
-    const newY = direction === 'y' ? animal.y + step : animal.y;
+    // Nuevo sistema de movimiento más inteligente
+    const directions = [
+      { dx: 0, dy: -1 }, { dx: 0, dy: 1 },
+      { dx: -1, dy: 0 }, { dx: 1, dy: 0 }
+    ];
+    
+    const validMoves = directions.filter(({ dx, dy }) => {
+      const newX = animal.x + dx;
+      const newY = animal.y + dy;
+      return !isPositionBlocked(newX, newY) && 
+             newX >= 0 && newX < mapWidth && 
+             newY >= 0 && newY < mapHeight;
+    });
 
-    const boundedX = Math.max(0, Math.min(newX, mapWidth - 1));
-    const boundedY = Math.max(0, Math.min(newY, mapHeight - 1));
-
-    if (!isPositionBlocked(boundedX, boundedY)) {
-      return { ...animal, x: boundedX, y: boundedY };
+    if (validMoves.length > 0) {
+      const randomMove = validMoves[Math.floor(Math.random() * validMoves.length)];
+      return { 
+        ...animal, 
+        x: animal.x + randomMove.dx, 
+        y: animal.y + randomMove.dy,
+        energy: Math.max(animal.energy - 1, 0) // Consumen energía al moverse
+      };
     }
     return animal;
   });
 };
+
 
   export const getInitialAnimalPositions = (zone) => {
     switch (zone) {
