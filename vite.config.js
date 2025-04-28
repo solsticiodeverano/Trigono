@@ -5,6 +5,6 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   site: "https://solsticiodeverano.github.io",
-  base: "/Trigono/",
+  base: "/",
   output: "static",
 })

@@ -2,6 +2,7 @@
 import React from 'react';
 import { getBackgroundColor } from './ZoneHelpers';
 
+
 const treeIcons = {
   pine: '🌲',       // Aries
   oak: '🌳',        // Tauro
@@ -84,7 +85,9 @@ const GenerateGreenScreen = ({
   fertileTiles,
   houses,
   itemPositions,
-  allItems // Receive allItems as a prop
+  allItems, // Receive allItems as a prop
+  NPCPositions, // Pass NPC positions as a prop
+
 }) => {
   const startX = Math.max(0, playerPos.x - Math.floor(screenWidth / 2));
   const startY = Math.max(0, playerPos.y - Math.floor(screenHeight / 2));
@@ -112,6 +115,7 @@ const GenerateGreenScreen = ({
       const tree = getTreeAt(mapX, mapY);
       const isSelected = pointerPos.x === mapX && pointerPos.y === mapY;
       const isAnimalHere = animalPositions.some(animal => animal.x === mapX && animal.y === mapY);
+      const isNPClHere = NPCPositions.some(NPC => NPC.x === mapX && NPC.y === mapY);
       const isFertile = isTileFertile(mapX, mapY);
       const isThereHouse = isHouse(mapX, mapY);
       let tileBackgroundColor = baseBackgroundColor;
@@ -194,6 +198,15 @@ const GenerateGreenScreen = ({
             animal.x === mapX && animal.y === mapY ? (
               <div key={animal.id} className="animal" style={{ position: 'absolute', top: 0, left: 0, fontSize: `${tileSize * 0.8}px` }}>
                 {animal.emoji}
+              </div>
+            ) : null
+          )}
+
+           {/* NPC */}
+           {NPCPositions.map(NPC =>
+            NPC.x === mapX && NPC.y === mapY ? (
+              <div key={NPC.id} className="NPC" style={{ position: 'absolute', top: 0, left: 0, fontSize: `${tileSize * 0.8}px` }}>
+                {NPC.emoji}
               </div>
             ) : null
           )}

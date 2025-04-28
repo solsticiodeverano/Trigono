@@ -64,8 +64,8 @@ const PlayerController = ({
       else if (dy === -1) setInternalDirection('up');
 
       movePlayer(dx, dy);
-      setDirection(direction); // Update the direction in Zone1
-      setPlayerPos(playerPos); // Update the player position in Zone1
+      setDirection(direction); // Update the direction in Server
+      setPlayerPos(playerPos); // Update the player position in Server
     },
     onAttack: () => {
       if (canAttack) {
@@ -95,7 +95,7 @@ const PlayerController = ({
       }
     },
     onJump: () => {},
-    onOk: handleOkPress, // Call handleOkPress from Zone1
+    onOk: handleOkPress, // Call handleOkPress from Server
     onBack: () => {},
     onSkill: (skillId) => {},
     onProtect: () => {},

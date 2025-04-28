@@ -1,32 +1,55 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import React, { useState, useEffect, useRef } from 'react';
-import './Zone1.css';
-import fixedTreeData from './fixedTree.json';
+import { useState, useEffect, useRef, useCallback } from 'react';
+import './Server.css';
 import Display from '../Visor/Display.jsx';
+
+//TILES imports
 import {
   mapWidth,
   mapHeight,
   tileSize,
   screenWidth,
   screenHeight,
-} from './Tile';
-import Avatar from '../Player/Avatar.jsx';
-import QuestLog from '../Gameplay/QuestLog.jsx';
-import BookScreen from '../Gameplay/BookScreen.jsx';
+} from './Tile.jsx';
+
+//GAME imports
 import { loadGameData } from '../../loaders/LoadGameData.js';
-import Consola from '../Visor/Consola.jsx';
-import Logica from '../Gameplay/Logica.jsx';
 import zodiacZones from './ZoneData.js';
+import Logica from '../Gameplay/Logica.jsx';
+import GenerateGreenScreen from './GenerateGreenScreen.jsx';
+
+//PLAYER imports
+import Avatar from '../Player/Avatar.jsx';
+import PlayerController from './PlayerController.jsx';
+
+//QUEST imports
+import QuestLog from '../Gameplay/QuestLog.jsx';
+
+//DISPLAYERS imports
+import Consola from '../Visor/Consola.jsx';
+import BookScreen from '../Gameplay/BookScreen.jsx';
+
+//FLORA imports
+import { generateTreeMaze } from './generateTreeMaze.js';
+
+//FAUNA imports
 import {
   getInitialAnimalPositions,
   moveAnimals,
 } from './ZoneHelpers.js';
-import GenerateGreenScreen from './GenerateGreenScreen.jsx';
-import { generateTreeMaze } from './generateTreeMaze.js';
-import PlayerController from './PlayerController.jsx';
-import itemPositionsData from './itemPositionsData';
 
+//NPC imports
+import {
+  getInitialNPCPositions,
+  moveNPC,
+} from './NPCHelpers.js';
+
+//ITEMS imports
+import itemPositionsData from './itemPositionsData.js';
+
+
+//FLORA//
 // Nueva función para intentar lanzar semilla
 function trySeedRelease(trees, fertileTiles, width, height) {
   const directions = [
@@ -35,38 +58,45 @@ function trySeedRelease(trees, fertileTiles, width, height) {
     { dx: -1, dy: 0 },
     { dx: 1, dy: 0 },
   ];
-
+  const now = Date.now();
   const newSeeds = [];
   const updatedTrees = trees.map(tree => {
-    // Solo árboles que no hayan dado semilla
+    // Solo árboles adultos, no semillas ni plantas
     if (
       tree.energy >= 150 &&
       tree.type !== 'seed' &&
-      tree.type !== 'plant' &&
-      !tree.hasGivenSeed // NUEVO CHEQUEO
+      tree.type !== 'plant'
     ) {
-      if (Math.random() < 0.5) {
-        const shuffledDirections = directions.sort(() => 0.5 - Math.random());
-        for (let dir of shuffledDirections) {
-          const nx = tree.x + dir.dx;
-          const ny = tree.y + dir.dy;
-          if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
-          const occupied = trees.some(t => t.x === nx && t.y === ny);
-          if (!occupied) {
-            newSeeds.push({ x: nx, y: ny, type: 'seed', energy: 5 });
-            // Marcar árbol como que ya dio semilla
-            return { ...tree, hasGivenSeed: true, seedCooldownUntil: Date.now() + 2 * 60 * 1000 // 2 minutos en milisegundos
-            };
+      // Si nunca intentó o ya pasó el cooldown de 30s
+      if (!tree.lastSeedAttempt || now >= tree.lastSeedAttempt + 30_000) {
+        // Actualiza el último intento
+        let updatedTree = { ...tree, lastSeedAttempt: now };
+
+        // Probabilidad del 10% de soltar semilla
+        if (Math.random() < 0.1) {
+          // Busca un espacio libre a su alrededor
+          const shuffledDirections = directions.sort(() => 0.5 - Math.random());
+          for (let dir of shuffledDirections) {
+            const nx = tree.x + dir.dx;
+            const ny = tree.y + dir.dy;
+            if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
+            const occupied = trees.some(t => t.x === nx && t.y === ny);
+            if (!occupied) {
+              newSeeds.push({ x: nx, y: ny, type: 'seed', energy: 5 });
+              break; // Solo una semilla por intento
+            }
           }
         }
+        return updatedTree;
       }
     }
     return tree;
   });
 
-  // Agregar las semillas nuevas a la lista de árboles
+  // Agrega las semillas nuevas a la lista de árboles
   return updatedTrees.concat(newSeeds);
 }
+
 // Nueva función para actualizar energía y evolución de semillas
 function updateSeedsAndPlants(trees, fertileTiles, treeType) {
   return trees.map(tree => {
@@ -99,7 +129,9 @@ function updateSeedsAndPlants(trees, fertileTiles, treeType) {
   }).filter(tree => tree !== null);
 }
 
-const Zone1 = ({ setPointerPos }) => {
+const Server = ({ setPointerPos }) => {
+
+  ///VARIABLES///
   // ----- State and Initial Variables -----
   const [playerPos, setPlayerPos] = useState({ x: 11, y: 10 });
   const [currentZone, setCurrentZone] = useState('Aries');
@@ -111,6 +143,7 @@ const Zone1 = ({ setPointerPos }) => {
   const [houses, setHouses] = useState([]);
   const [direction, setDirection] = useState('down');
   const [animalPositions, setAnimalPositions] = useState([]);
+  const [NPCPositions, setNPCPositions] = useState([]);
   const allItems = loadGameData() || [];
   const [isDisplayOpen, setIsDisplayOpen] = useState(false);
   const [mensajesConsola, setMensajesConsola] = useState([]);
@@ -119,30 +152,34 @@ const Zone1 = ({ setPointerPos }) => {
   const [itemPositions, setItemPositions] = useState([]);
   const [inventory, setInventory] = useState([]);
 
-  // ----- Logic Functions -----
+  // ----- DISPLAYER -----
   const enviarMensaje = ({ texto, tipo = 'info', icono = 'ℹ️' }) => {
     setMensajesConsola((prev) => [...prev, { id: Date.now(), texto, tipo, icono }]);
   };
-
+//LOGICA DE JUEGO//
   const isTileFertile = (x, y, fertileTiles) => {
     return fertileTiles.some((tile) => tile.x === x && tile.y === y);
   };
 
-  const isPositionBlocked = (x, y) => {
+  const isPositionBlocked = useCallback((x, y) => {
     return (
       fixedTreePositions.some((tree) => tree.x === x && tree.y === y && tree.type !== 'seed' && tree.type !== 'plant') ||
       animalPositions.some((animal) => animal.x === x && animal.y === y) ||
+      NPCPositions.some((NPC) => NPC.x === x && NPC.y === y) ||
       houses.some(
         (house) =>
           x >= house.x && x <= house.x + 1 && y >= house.y && y <= house.y + 1
       )
     );
-  };
+  });
+
+  //OBJETOS//<<<<<< ESTO PARECECIERA QUE ES LO QUE FUNCIONA MAL
 
   const getObjectsAtPointerPosition = (x, y) => {
     const treesAtPosition = fixedTreePositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'tree');
     const seedsAtPosition = fixedTreePositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'seed');
     const plantsAtPosition = fixedTreePositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'plant');
+    const NPCAtPosition = NPCPositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'NPC');
     const animalsAtPosition = animalPositions.filter(
       (animal) => animal.x === x && animal.y === y
     );
@@ -153,10 +190,13 @@ const Zone1 = ({ setPointerPos }) => {
     if (seedsAtPosition.length > 0) objects.push(`Seeds: ${seedsAtPosition.length}`);
     if (plantsAtPosition.length > 0) objects.push(`Plants: ${plantsAtPosition.length}`);
     if (animalsAtPosition.length > 0) objects.push(`Animals: ${animalsAtPosition.length}`);
+    if (NPCAtPosition.length > 0) objects.push(`NPC: ${NPCAtPosition.length}`);
     if (itemsAtPosition.length > 0) objects.push(`Items: ${itemPositions.map(item => item.id).join(', ')}`);
 
     return objects.length > 0 ? objects.join(', ') : 'Nothing here.';
   };
+
+  //ACCIONES FUNCIONES TECLADO
 
   const handleAttack = () => {
     const updatedTrees = fixedTreePositions.map(tree => ({ ...tree }));
@@ -205,6 +245,8 @@ const Zone1 = ({ setPointerPos }) => {
     }
   };
 
+
+  //DISPLAYER CONSOLA
   useEffect(() => {
     if (!currentZone) return;
 
@@ -215,6 +257,8 @@ const Zone1 = ({ setPointerPos }) => {
     });
   }, [currentZone]);
 
+
+  //TILES TERRENO FERTILIDAD
   useEffect(() => {
     const newFertileTiles = [];
     for (let x = 0; x < mapWidth; x++) {
@@ -226,6 +270,7 @@ const Zone1 = ({ setPointerPos }) => {
     }
     setFertileTiles(newFertileTiles);
 
+    //CASAS/////////////
     const newHouses = [];
     for (let i = 0; i < 6; i++) {
       let houseX, houseY;
@@ -244,6 +289,7 @@ const Zone1 = ({ setPointerPos }) => {
     setHouses(newHouses);
   }, [currentZone]);
 
+  ///POSICIONES 
   useEffect(() => {
     const mazeTrees = generateTreeMaze(120, 30, currentZone, fertileTiles, houses);
     setFixedTreePositions(mazeTrees);
@@ -272,6 +318,10 @@ const Zone1 = ({ setPointerPos }) => {
 
   useEffect(() => {
     setAnimalPositions(getInitialAnimalPositions(currentZone));
+  }, [currentZone]);
+
+  useEffect(() => {
+    setNPCPositions(getInitialNPCPositions(currentZone));
   }, [currentZone]);
 
   const getPointerPos = (playerPos, direction) => {
@@ -306,6 +356,21 @@ const Zone1 = ({ setPointerPos }) => {
     };
   }, [animalPositions, isPositionBlocked]);
 
+  useEffect(() => {
+      const timers = NPCPositions.map(
+          (NPC) =>
+          setInterval(() => {
+              setNPCPositions((prevPositions) =>
+                  moveNPC(prevPositions, isPositionBlocked)
+              );
+          }, NPC.speed)
+      );
+
+      return () => {
+          timers.forEach((timer) => clearInterval(timer));
+      };
+  }, [NPCPositions, isPositionBlocked]);
+
   const playerName = 'AX';
   const playerLevel = 1;
 
@@ -313,6 +378,8 @@ const Zone1 = ({ setPointerPos }) => {
     setItemPositions(itemPositionsData[currentZone] || []);
   }, [currentZone]);
 
+
+  //TIPOS DE ARBOL X ZONA
   const getTreeTypeForZone = (zone) => {
     const treeTypesByZone = {
       Aries: 'pine',
@@ -332,29 +399,35 @@ const Zone1 = ({ setPointerPos }) => {
     return treeTypesByZone[zone] || 'default';
   };
 
+
+
+  ///////////////////////////////////7RETURN////////////////////////
+
   return (
     <div className="game-container">
       {/* PlayerController Component */}
       <PlayerController
-        initialPosition={{ x: 11, y: 10 }}
-        mapWidth={mapWidth}
-        mapHeight={mapHeight}
-        isPositionBlocked={isPositionBlocked}
-        setCurrentZone={setCurrentZone}
-        zodiacZones={zodiacZones}
-        getInitialAnimalPositions={getInitialAnimalPositions}
-        setAttackPosition={setAttackPosition}
-        setDirection={setDirection}
-        setPointerPos={setPointerPos}
-        setPlayerPos={setPlayerPos}
-        setAnimalPositions={setAnimalPositions}
-        setShowAttack={setShowAttack}
-        setCanAttack={setCanAttack}
-        pointerPos={pointerPos}
-        setFixedTreePositions={setFixedTreePositions}
-        currentZone={currentZone}
-        handleOkPress={handleOkPress} // Pass handleOkPress
-      />
+  initialPosition={{ x: 11, y: 10 }}
+  mapWidth={mapWidth}
+  mapHeight={mapHeight}
+  isPositionBlocked={isPositionBlocked}
+  setCurrentZone={setCurrentZone}
+  zodiacZones={zodiacZones}
+  getInitialAnimalPositions={getInitialAnimalPositions}
+  getInitialNPCPositions={getInitialNPCPositions}
+  setAttackPosition={setAttackPosition}
+  setDirection={setDirection}
+  setPointerPos={setPointerPos}
+  setPlayerPos={setPlayerPos}
+  setAnimalPositions={setAnimalPositions}
+  setNPCPositions={setNPCPositions}
+  setShowAttack={setShowAttack}
+  setCanAttack={setCanAttack}
+  pointerPos={pointerPos}
+  setFixedTreePositions={setFixedTreePositions}
+  currentZone={currentZone}
+  handleOkPress={handleOkPress} // Pass handleOkPress
+/>
 
       <div className="game-map">
         <GenerateGreenScreen
@@ -363,6 +436,7 @@ const Zone1 = ({ setPointerPos }) => {
           screenHeight={screenHeight}
           fixedTreePositions={fixedTreePositions}
           animalPositions={animalPositions}
+          NPCPositions={NPCPositions}
           pointerPos={pointerPos}
           tileSize={tileSize}
           currentZone={currentZone}
@@ -401,4 +475,4 @@ const Zone1 = ({ setPointerPos }) => {
   );
 };
 
-export default Zone1;
+export default Server;

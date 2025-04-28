@@ -8,7 +8,7 @@ const Home = () => {
       <div className={styles.logo}><PiIntersectThreeThin/></div>
         <h1>TRIGONO</h1>
       <div className={styles.buttonContainer}>
-        <Link to="/zona1" className={styles.button}>
+        <Link to="/server" className={styles.button}>
           Iniciar
         </Link>
         <Link to="/creando" className={styles.button}>

@@ -7,7 +7,9 @@ const GameMap = ({
   setPlayerPos,
   fixedTreePositions,
   animalPositions,
+  NPCPositions,
   setAnimalPositions,
+  setNPCPositions
   showAttack,
   attackPosition,
   setShowAttack,
@@ -35,6 +37,7 @@ const GameMap = ({
   const isPositionBlocked = (x, y) => {
     return (
       fixedTreePositions.some(tree => tree.x === x && tree.y === y) ||
+      NPCPositions.some(NPC => NPC.x === x && NPC.y === y) ||
       animalPositions.some(animal => animal.x === x && animal.y === y)
     );
   };

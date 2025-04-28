@@ -1,7 +1,7 @@
 // components/Keys.jsx
 import { useEffect } from 'react';
 
-const useKeyboardControls = ({ onMove, onAttack, onJump, onOk, onBack, onSkill, onProtect, onRun }) => {
+const useKeyboardControls = ({ onMove, onAttack, onJump, onOk, onBack, onSkill, onProtect, onRun })  => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       switch (e.key) {
