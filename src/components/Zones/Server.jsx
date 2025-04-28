@@ -37,6 +37,10 @@ import { generateTreeMaze } from './generateTreeMaze.js';
 import {
   getInitialAnimalPositions,
   moveAnimals,
+  getTreeTypeForZone,
+  generateFertileTiles,
+   generateHouses,
+   isTileFertile
 } from './ZoneHelpers.js';
 
 //NPC imports
@@ -156,10 +160,8 @@ const Server = ({ setPointerPos }) => {
   const enviarMensaje = ({ texto, tipo = 'info', icono = 'ℹ️' }) => {
     setMensajesConsola((prev) => [...prev, { id: Date.now(), texto, tipo, icono }]);
   };
-//LOGICA DE JUEGO//
-  const isTileFertile = (x, y, fertileTiles) => {
-    return fertileTiles.some((tile) => tile.x === x && tile.y === y);
-  };
+
+ //LOGICA DE JUEGO//
 
   const isPositionBlocked = useCallback((x, y) => {
     return (
@@ -173,7 +175,7 @@ const Server = ({ setPointerPos }) => {
     );
   });
 
-  //OBJETOS//<<<<<< ESTO PARECECIERA QUE ES LO QUE FUNCIONA MAL
+  //OBJETOS//
 
   const getObjectsAtPointerPosition = (x, y) => {
     const treesAtPosition = fixedTreePositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'tree');
@@ -260,32 +262,11 @@ const Server = ({ setPointerPos }) => {
 
   //TILES TERRENO FERTILIDAD
   useEffect(() => {
-    const newFertileTiles = [];
-    for (let x = 0; x < mapWidth; x++) {
-      for (let y = 0; y < mapHeight; y++) {
-        if (Math.random() < 0.9) {
-          newFertileTiles.push({ x, y });
-        }
-      }
-    }
+    const newFertileTiles = generateFertileTiles(mapWidth, mapHeight);
     setFertileTiles(newFertileTiles);
 
     //CASAS/////////////
-    const newHouses = [];
-    for (let i = 0; i < 6; i++) {
-      let houseX, houseY;
-      do {
-        houseX = Math.floor(Math.random() * (mapWidth - 1));
-        houseY = Math.floor(Math.random() * (mapHeight - 1));
-      } while (
-        newHouses.some((house) => house.x === houseX && house.y === houseY) ||
-        !isTileFertile(houseX, houseY, newFertileTiles) ||
-        !isTileFertile(houseX + 1, houseY, newFertileTiles) ||
-        !isTileFertile(houseX, houseY + 1, newFertileTiles) ||
-        !isTileFertile(houseX + 1, houseY + 1, newFertileTiles)
-      );
-      newHouses.push({ x: houseX, y: houseY });
-    }
+    const newHouses = generateHouses(6, mapWidth, mapHeight, newFertileTiles, isTileFertile);
     setHouses(newHouses);
   }, [currentZone]);
 
@@ -379,29 +360,20 @@ const Server = ({ setPointerPos }) => {
   }, [currentZone]);
 
 
-  //TIPOS DE ARBOL X ZONA
-  const getTreeTypeForZone = (zone) => {
-    const treeTypesByZone = {
-      Aries: 'pine',
-      Tauro: 'oak',
-      Géminis: 'birch',
-      Cáncer: 'willow',
-      Leo: 'maple',
-      Virgo: 'spruce',
-      Libra: 'cedar',
-      Escorpio: 'redwood',
-      Sagitario: 'cypress',
-      Capricornio: 'fir',
-      Acuario: 'palm',
-      Piscis: 'baobab',
-    };
-
-    return treeTypesByZone[zone] || 'default';
+  //Tirar objetos
+  const handleDropItemToWorld = (item, pos) => {
+    setItemPositions(prev => [
+      ...prev,
+      {
+        ...item,
+        x: pos.x,
+        y: pos.y,
+      }
+    ]);
   };
+  
 
-
-
-  ///////////////////////////////////7RETURN////////////////////////
+  ///////////////////////////////////RETURN////////////////////////
 
   return (
     <div className="game-container">
@@ -465,7 +437,8 @@ const Server = ({ setPointerPos }) => {
         pointerPos={pointerPos}
         inventory={inventory}
         setInventory={setInventory}
-      />
+        onDropItemToWorld={handleDropItemToWorld}
+        />
 
       <QuestLog inventory={inventory} />
       <BookScreen allItems={allItems} />

@@ -18,23 +18,14 @@ const Display = ({
   onOpen,
   pointerPos,
   inventory,
-  setInventory
+  setInventory,
+  onDropItemToWorld,
 }) => {
   const maxStats = {
     tierra: 100,
     fuego: 100,
     viento: 100,
     agua: 100,
-  };
-
-  const getPointerPos = () => {
-    switch (direction) {
-      case 'up': return { x: position.x, y: position.y - 1 };
-      case 'down': return { x: position.x, y: position.y + 1 };
-      case 'left': return { x: position.x - 1, y: position.y };
-      case 'right': return { x: position.x + 1, y: position.y };
-      default: return position;
-    }
   };
 
   const [selectedWeapon, setSelectedWeapon] = useState(null);
@@ -87,6 +78,8 @@ const Display = ({
               <h3>Mochila</h3>
               <CharacterInventory
                 inventory={inventory}
+                onDropItemToWorld={onDropItemToWorld}
+                pointerPos={pointerPos} 
                 setInventory={setInventory}
                 onEquip={(item) => {
                   if (item.category === "weapons") setSelectedWeapon(item);

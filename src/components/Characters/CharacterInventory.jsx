@@ -13,7 +13,7 @@ const categories = [
 ];
 
 
-const CharacterInventory = ({ inventory, setInventory, onEquip }) => {
+const CharacterInventory = ({ inventory, setInventory, onEquip, onDropItemToWorld, pointerPos  }) => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [selectedItem, setSelectedItem] = useState(null);
 
@@ -30,9 +30,12 @@ const CharacterInventory = ({ inventory, setInventory, onEquip }) => {
     if (!selectedItem) return;
     setInventory(prev => prev.filter(item => item.id !== selectedItem.id));
     setSelectedItem(null);
+    if (onDropItemToWorld && pointerPos) {
+      onDropItemToWorld(selectedItem, pointerPos);
+    }
     alert(`Tiraste ${selectedItem.name}`);
   };
-
+  
   return (
     <div className={styles.inventoryWrapper}>
       <aside className={styles.categoryMenu}>

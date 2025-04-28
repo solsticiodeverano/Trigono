@@ -69,5 +69,54 @@ export const moveAnimals = (animalPositions, isPositionBlocked) => {
     };
     return zoneColors[zone] || 'lightgray';
   };
+
+  export const treeTypesByZone = {
+    Aries: 'pine',
+    Tauro: 'oak',
+    Géminis: 'birch',
+    Cáncer: 'willow',
+    Leo: 'maple',
+    Virgo: 'spruce',
+    Libra: 'cedar',
+    Escorpio: 'redwood',
+    Sagitario: 'cypress',
+    Capricornio: 'fir',
+    Acuario: 'palm',
+    Piscis: 'baobab',
+  };
   
+  export const getTreeTypeForZone = (zone) => treeTypesByZone[zone] || 'default';
   
+  export function generateFertileTiles(mapWidth, mapHeight, probability = 0.9) {
+    const fertileTiles = [];
+    for (let x = 0; x < mapWidth; x++) {
+      for (let y = 0; y < mapHeight; y++) {
+        if (Math.random() < probability) {
+          fertileTiles.push({ x, y });
+        }
+      }
+    }
+    return fertileTiles;
+  }
+  // ZoneHelpers.js
+export const isTileFertile = (x, y, fertileTiles) => 
+  fertileTiles.some(tile => tile.x === x && tile.y === y);
+
+  export function generateHouses(numHouses, mapWidth, mapHeight, fertileTiles, isTileFertile) {
+    const houses = [];
+    for (let i = 0; i < numHouses; i++) {
+      let houseX, houseY;
+      do {
+        houseX = Math.floor(Math.random() * (mapWidth - 1));
+        houseY = Math.floor(Math.random() * (mapHeight - 1));
+      } while (
+        houses.some((house) => house.x === houseX && house.y === houseY) ||
+        !isTileFertile(houseX, houseY, fertileTiles) ||
+        !isTileFertile(houseX + 1, houseY, fertileTiles) ||
+        !isTileFertile(houseX, houseY + 1, fertileTiles) ||
+        !isTileFertile(houseX + 1, houseY + 1, fertileTiles)
+      );
+      houses.push({ x: houseX, y: houseY });
+    }
+    return houses;
+  }
