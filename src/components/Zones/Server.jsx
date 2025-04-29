@@ -53,6 +53,7 @@ import {
 import itemPositionsData from './itemPositionsData.js';
 
 
+
 //FLORA//
 // Nueva función para intentar lanzar semilla
 function trySeedRelease(trees, fertileTiles, width, height) {
@@ -155,6 +156,7 @@ const Server = ({ setPointerPos }) => {
   const [showQuestLog, setShowQuestLog] = useState(false);
   const [itemPositions, setItemPositions] = useState([]);
   const [inventory, setInventory] = useState([]);
+  const [equippedWeapon, setEquippedWeapon] = useState(null);
 
   // ----- DISPLAYER -----
   const enviarMensaje = ({ texto, tipo = 'info', icono = 'ℹ️' }) => {
@@ -199,68 +201,70 @@ const Server = ({ setPointerPos }) => {
   };
 
   //ACCIONES FUNCIONES TECLADO
+  const baseDamage = 50;
+  const weaponMultiplier = equippedWeapon?.powerMultiplier || 1;
+  const damage = Math.floor(baseDamage * weaponMultiplier);
 
-  const handleAttack = () => {
-    let attacked = false;
-    // Árboles
+const handleAttack = () => {
+  let attacked = false;
 
-    const updatedTrees = fixedTreePositions.map(tree => ({ ...tree }));
-  const updatedAnimals = animalPositions.map(animal => ({ ...animal }));
-  const updatedNPCs = NPCPositions.map(npc => ({ ...npc }));
-    // Atacar árboles/plants/semillas en la posición
+  // Árboles
+  const updatedTrees = fixedTreePositions.map(tree => ({ ...tree }));
   for (let i = updatedTrees.length - 1; i >= 0; i--) {
     const tree = updatedTrees[i];
     if (tree.x === pointerPos.x && tree.y === pointerPos.y) {
-      tree.energy -= 50;
+      tree.energy -= damage;
       attacked = true;
       if (tree.energy <= 0) {
         updatedTrees.splice(i, 1);
-        enviarMensaje({ texto: 'Tree/Seed/Plant destroyed!', tipo: 'success', icono: '🔥' });
+        enviarMensaje({ texto: 'Árbol destruido!', tipo: 'success', icono: '🔥' });
       } else {
-        enviarMensaje({ texto: 'Attacked Tree/Seed/Plant!', tipo: 'info', icono: '⚔️' });
+        enviarMensaje({ texto: `Árbol atacado con ${damage} de daño!`, tipo: 'info', icono: '⚔️' });
       }
     }
   }
+  setFixedTreePositions(updatedTrees);
 
-  // Atacar animales en la posición
+  // Animales
+  const updatedAnimals = animalPositions.map(animal => ({ ...animal }));
   for (let i = updatedAnimals.length - 1; i >= 0; i--) {
     const animal = updatedAnimals[i];
     if (animal.x === pointerPos.x && animal.y === pointerPos.y) {
-      animal.energy -= 50;
+      animal.energy -= damage;
       attacked = true;
       if (animal.energy <= 0) {
         updatedAnimals.splice(i, 1);
-        enviarMensaje({ texto: 'Animal defeated!', tipo: 'success', icono: '🦊' });
+        enviarMensaje({ texto: 'Animal derrotado!', tipo: 'success', icono: '🦊' });
       } else {
-        enviarMensaje({ texto: 'Animal hit!', tipo: 'info', icono: '⚔️' });
+        enviarMensaje({ texto: `Animal atacado con ${damage} de daño!`, tipo: 'info', icono: '⚔️' });
       }
     }
   }
+  setAnimalPositions(updatedAnimals);
 
-  // Atacar NPCs en la posición
+  // NPCs
+  const updatedNPCs = NPCPositions.map(npc => ({ ...npc }));
   for (let i = updatedNPCs.length - 1; i >= 0; i--) {
     const npc = updatedNPCs[i];
     if (npc.x === pointerPos.x && npc.y === pointerPos.y) {
-      npc.energy -= 50;
+      npc.energy -= damage;
       attacked = true;
       if (npc.energy <= 0) {
         updatedNPCs.splice(i, 1);
-        enviarMensaje({ texto: 'NPC defeated!', tipo: 'success', icono: '🧑' });
+        enviarMensaje({ texto: 'NPC derrotado!', tipo: 'success', icono: '🧑' });
       } else {
-        enviarMensaje({ texto: 'NPC hit!', tipo: 'info', icono: '⚔️' });
+        enviarMensaje({ texto: `NPC atacado con ${damage} de daño!`, tipo: 'info', icono: '⚔️' });
       }
     }
   }
+  setNPCPositions(updatedNPCs);
 
-  // Actualizar estados si atacó algo
-  if (attacked) {
-    setFixedTreePositions(updatedTrees);
-    setAnimalPositions(updatedAnimals);
-    setNPCPositions(updatedNPCs);
-  } else {
+  if (!attacked) {
     enviarMensaje({ texto: 'No hay nada que atacar aquí!', tipo: 'warning', icono: '⚠️' });
   }
 };
+
+//handle press
 
   const handleGetPress = () => {
     const itemToPickUp = itemPositions.find(item => item.x === pointerPos.x && item.y === pointerPos.y);
@@ -478,6 +482,8 @@ useEffect(() => {
           agua: 80,
         }}
         selectedPower={selectedPower}
+        selectedWeapon={equippedWeapon}
+        onEquipWeapon={setEquippedWeapon}
         isOpen={isDisplayOpen}
         onClose={() => setIsDisplayOpen(false)}
         onOpen={() => setIsDisplayOpen(true)}
@@ -485,6 +491,7 @@ useEffect(() => {
         inventory={inventory}
         setInventory={setInventory}
         onDropItemToWorld={handleDropItemToWorld}
+
         />
 
       <QuestLog inventory={inventory} />

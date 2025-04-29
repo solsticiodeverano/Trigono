@@ -1,6 +1,6 @@
 [
-    { "id": "espada-001", "name": "Espada de Hierro", "description": "Una espada común pero resistente.", "icon": "🗡️" },
-    { "id": "espada-002", "name": "Colmillo del Lobo", "description": "Rápida y feroz como un lobo.", "icon": "⚔️" },
-    { "id": "espada-003", "name": "Hoja Celestial", "description": "Bendecida por los dioses.", "icon": "🔱" }
+    { "id": "espada-001", "name": "Espada de Hierro", "description": "Una espada común pero resistente.", "powerMultiplier": 1.2, "icon": "🗡️" },
+    { "id": "espada-002", "name": "Colmillo del Lobo", "description": "Rápida y feroz como un lobo.","powerMultiplier": 2, "icon": "⚔️" },
+    { "id": "espada-003", "name": "Hoja Celestial", "description": "Bendecida por los dioses.", "powerMultiplier": 1.2, "icon": "🔱" }
   ]
   

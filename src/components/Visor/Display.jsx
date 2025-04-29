@@ -20,6 +20,8 @@ const Display = ({
   inventory,
   setInventory,
   onDropItemToWorld,
+  selectedWeapon,
+  onEquipWeapon,
 }) => {
   const maxStats = {
     tierra: 100,
@@ -28,7 +30,6 @@ const Display = ({
     agua: 100,
   };
 
-  const [selectedWeapon, setSelectedWeapon] = useState(null);
   const [selectedShield, setSelectedShield] = useState(null);
   const [selectedBeast, setSelectedBeast] = useState(null);
   const [selectedSkills, setSelectedSkills] = useState([null, null, null, null]);
@@ -82,7 +83,7 @@ const Display = ({
                 pointerPos={pointerPos} 
                 setInventory={setInventory}
                 onEquip={(item) => {
-                  if (item.category === "weapons") setSelectedWeapon(item);
+                  if (item.category === "weapons") onEquipWeapon(item);
                   else if (item.category === "shield") setSelectedShield(item);
                   else if (item.category === "beast") setSelectedBeast(item);
                 }}
