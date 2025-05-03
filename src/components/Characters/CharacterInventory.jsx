@@ -4,7 +4,7 @@ import styles from "./CharacterInventory.module.css";
 
 const categories = [
   { id: "all", icon: "✨", label: "Todas" },
-  { id: "weapons", icon: "🪄", label: "Armas" },
+  { id: "weapons", icon: "🏹", label: "Armas" },
   { id: "shield", icon: "🛡️", label: "Escudos" },
   { id: "books", icon: "📚", label: "Libros" },
   { id: "maps", icon: "🗺️", label: "Mapas" },

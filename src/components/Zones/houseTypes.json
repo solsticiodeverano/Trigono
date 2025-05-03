@@ -1,0 +1,15 @@
+export const houseTypes = [
+    { type: 'Herrería', color: 'gray' },
+    { type: 'Vivero', color: 'green' },
+    { type: 'Correo', color: 'blue' },
+    { type: 'Granja', color: 'yellow' },
+    { type: 'Tienda', color: 'orange' },
+    { type: 'Tienda de Animales', color: 'brown' },
+    { type: 'Herboristería', color: 'lightgreen' },
+    { type: 'Cementerio', color: 'darkgray' },
+    { type: 'Biblioteca', color: 'purple' },
+    { type: 'Monasterio', color: 'white' },
+    { type: 'Casa Embrujada', color: 'black' },
+    { type: 'Escudería', color: 'red' },
+  ];
+  

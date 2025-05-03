@@ -1,18 +1,23 @@
-.skillsContainer,
 .statsContainer {
   padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  margin-bottom: 20px;
+  background-color: #111;
+  border-radius: 12px;
+  color: #fff;
 }
 
-.skillsList,
-.statsList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.barWrapper {
+  margin: 16px 0;
 }
 
-.skillItem {
-  margin-bottom: 10px;
+.label {
+  font-weight: bold;
+  margin-bottom: 6px;
+}
+
+.dualBar {
+  height: 24px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #444;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.1);
 }

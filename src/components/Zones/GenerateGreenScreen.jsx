@@ -4,22 +4,76 @@ import { getBackgroundColor } from './ZoneHelpers';
 
 
 const treeIcons = {
-  pine: '🌲',       // Aries
-  oak: '🌳',        // Tauro
-  birch: '🌿',      // Géminis
-  willow: '🍃',     // Cáncer
-  maple: '🍁',      // Leo
-  spruce: '🎄',     // Virgo
-  cedar: '🌴',      // Libra
-  redwood: '🌲',    // Escorpio (puedes cambiar)
-  cypress: '🌵',    // Sagitario
-  fir: '🌲',        // Capricornio
-  palm: '🌴',       // Acuario
-  baobab: '🌳',     // Piscis
-  seed: '🌱',       // Semilla (único icono para todas las zonas)
-  plant: '🌿',      // Planta (puede ser un icono genérico o por zona)
-  default: '🌳'
+  // Etapa 1: Semilla (único emoji para todas)
+  seed: '🌱',
+
+  // Etapa 2: Planta (único emoji para todas, o puedes personalizar)
+  plant: '🌿',
+
+  // Aries
+  pine:        '🌲',   // Árbol
+  pine_flor:   '🌸',   // Árbol Florecido
+  pine_fruto:  '🍏',   // Árbol Frutado
+
+  // Tauro
+  oak:         '🌳',
+  oak_flor:    '🌺',
+  oak_fruto:   '🍎',
+
+  // Géminis
+  birch:       '🌿',
+  birch_flor:  '💐',
+  birch_fruto: '🍐',
+
+  // Cáncer
+  willow:      '🍃',
+  willow_flor: '🌼',
+  willow_fruto:'🍇',
+
+  // Leo
+  maple:       '🍁',
+  maple_flor:  '🌻',
+  maple_fruto: '🍊',
+
+  // Virgo
+  spruce:      '🎄',
+  spruce_flor: '🌷',
+  spruce_fruto:'🥝',
+
+  // Libra
+  cedar:       '🌴',
+  cedar_flor:  '🏵️',
+  cedar_fruto: '🥥',
+
+  // Escorpio
+  redwood:     '🌲',
+  redwood_flor:'🌹',
+  redwood_fruto:'🍒',
+
+  // Sagitario
+  cypress:     '🌵',
+  cypress_flor:'🌼',
+  cypress_fruto:'🍋',
+
+  // Capricornio
+  fir:         '🌲',
+  fir_flor:    '🌸',
+  fir_fruto:   '🍐',
+
+  // Acuario
+  palm:        '🌴',
+  palm_flor:   '🌺',
+  palm_fruto:  '🥭',
+
+  // Piscis
+  baobab:      '🌳',
+  baobab_flor: '🌼',
+  baobab_fruto:'🍌',
+
+  // Genéricos
+  default:     '🌳',
 };
+
 
 // Función para aclarar un color
 const lightenColor = (color, amount) => {

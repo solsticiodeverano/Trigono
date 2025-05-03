@@ -1,0 +1,99 @@
+[
+    {
+      "id": "seed_pine",
+      "name": "Semilla de Pino",
+      "icon": "🌱",
+      "plantType": "pine",
+      "category": "potions",
+      "description": "Semilla que crece en un pino."
+    },
+    {
+      "id": "seed_oak",
+      "name": "Semilla de Roble",
+      "icon": "🌱",
+      "plantType": "oak",
+      "category": "potions",
+      "description": "Semilla que crece en un roble."
+    },
+    {
+      "id": "seed_birch",
+      "name": "Semilla de Abedul",
+      "icon": "🌱",
+      "plantType": "birch",
+      "category": "potions",
+      "description": "Semilla que crece en un abedul."
+    },
+    {
+      "id": "seed_willow",
+      "name": "Semilla de Sauce",
+      "icon": "🌱",
+      "plantType": "willow",
+      "category": "potions",
+      "description": "Semilla que crece en un sauce."
+    },
+    {
+      "id": "seed_maple",
+      "name": "Semilla de Arce",
+      "icon": "🌱",
+      "plantType": "maple",
+      "category": "potions",
+      "description": "Semilla que crece en un arce."
+    },
+    {
+      "id": "seed_spruce",
+      "name": "Semilla de Abeto",
+      "icon": "🌱",
+      "plantType": "spruce",
+      "category": "potions",
+      "description": "Semilla que crece en un abeto."
+    },
+    {
+      "id": "seed_cedar",
+      "name": "Semilla de Cedro",
+      "icon": "🌱",
+      "plantType": "cedar",
+      "category": "potions",
+      "description": "Semilla que crece en un cedro."
+    },
+    {
+      "id": "seed_redwood",
+      "name": "Semilla de Secuoya",
+      "icon": "🌱",
+      "plantType": "redwood",
+      "category": "potions",
+      "description": "Semilla que crece en una secuoya."
+    },
+    {
+      "id": "seed_cypress",
+      "name": "Semilla de Ciprés",
+      "icon": "🌱",
+      "plantType": "cypress",
+      "category": "potions",
+      "description": "Semilla que crece en un ciprés."
+    },
+    {
+      "id": "seed_fir",
+      "name": "Semilla de Abeto Blanco",
+      "icon": "🌱",
+      "plantType": "fir",
+      "category": "potions",
+      "description": "Semilla que crece en un abeto blanco."
+    },
+    {
+      "id": "seed_palm",
+      "name": "Semilla de Palma",
+      "icon": "🌱",
+      "plantType": "palm",
+      "category": "potions",
+      "description": "Semilla que crece en una palma."
+    },
+    {
+      "id": "seed_baobab",
+      "name": "Semilla de Baobab",
+      "icon": "🌱",
+      "plantType": "baobab",
+      "category": "potions",
+      "description": "Semilla que crece en un baobab."
+    }
+  ]
+  

@@ -52,6 +52,10 @@ import {
 //ITEMS imports
 import itemPositionsData from './itemPositionsData.js';
 
+//LEYES
+import Balance from '../../data/laws/balance.jsx';
+import Cities from '../../data/laws/cities.jsx';
+
 
 
 //FLORA//
@@ -66,18 +70,16 @@ function trySeedRelease(trees, fertileTiles, width, height) {
   const now = Date.now();
   const newSeeds = [];
   const updatedTrees = trees.map(tree => {
-    // Solo árboles adultos, no semillas ni plantas
+    // SOLO árboles frutados pueden soltar semillas, y solo si no superó los 4 intentos
     if (
+      tree.type && tree.type.endsWith('_fruto') &&
       tree.energy >= 150 &&
-      tree.type !== 'seed' &&
-      tree.type !== 'plant'
+      (tree.fruitCycles !== undefined && tree.fruitCycles < 4)
     ) {
       // Si nunca intentó o ya pasó el cooldown de 30s
       if (!tree.lastSeedAttempt || now >= tree.lastSeedAttempt + 30_000) {
-        // Actualiza el último intento
-        let updatedTree = { ...tree, lastSeedAttempt: now };
-
         // Probabilidad del 10% de soltar semilla
+        let seedAttempted = false;
         if (Math.random() < 0.1) {
           // Busca un espacio libre a su alrededor
           const shuffledDirections = directions.sort(() => 0.5 - Math.random());
@@ -87,12 +89,16 @@ function trySeedRelease(trees, fertileTiles, width, height) {
             if (nx < 0 || nx >= width || ny < 0 || ny >= height) continue;
             const occupied = trees.some(t => t.x === nx && t.y === ny);
             if (!occupied) {
-              newSeeds.push({ x: nx, y: ny, type: 'seed', energy: 5 });
+              // Extrae el tipo base (sin _fruto)
+              let baseType = tree.type.replace('_fruto', '');
+              newSeeds.push({ x: nx, y: ny, type: 'seed', energy: 5, plantType: baseType });
+              seedAttempted = true;
               break; // Solo una semilla por intento
             }
           }
         }
-        return updatedTree;
+        // Suma un ciclo de intento, exitoso o no
+        return { ...tree, lastSeedAttempt: now, fruitCycles: (tree.fruitCycles || 0) + 1 };
       }
     }
     return tree;
@@ -103,36 +109,85 @@ function trySeedRelease(trees, fertileTiles, width, height) {
 }
 
 // Nueva función para actualizar energía y evolución de semillas
-function updateSeedsAndPlants(trees, fertileTiles, treeType) {
+function updateTreeGrowth(trees, fertileTiles) {
   return trees.map(tree => {
+    // SEMILLA
     if (tree.type === 'seed') {
       const newEnergy = Math.min(tree.energy + 1, 100);
-
       if (newEnergy >= 100) {
         if (Math.random() < 0.01) {
           const fertile = fertileTiles.some(tile => tile.x === tree.x && tile.y === tree.y);
           if (fertile) {
-            return { ...tree, type: 'plant', energy: newEnergy };
+            // La semilla evoluciona a planta
+            // plantType debe venir de la semilla al crearla, revisa trySeedRelease
+            return { ...tree, type: 'plant', energy: newEnergy, plantType: tree.plantType };
           } else {
-            return null; // La semilla muere si no está en tierra fértil
+            return null; // Muere si no está en tierra fértil
           }
         } else {
-          return null; // La semilla muere
+          return null; // Muere
         }
-      } else {
-        return { ...tree, energy: newEnergy };
       }
-    } else if (tree.type === 'plant') {
-      if (tree.energy >= 150) {
-        return { ...tree, type: treeType, energy: 150 }; // Se convierte en árbol
-      } else {
-        const newEnergy = Math.min(tree.energy + 1, 150);
-        return { ...tree, energy: newEnergy }; // Aumenta la energía de la planta
-      }
+      return { ...tree, energy: newEnergy };
     }
+
+    // PLANTA
+    if (tree.type === 'plant') {
+      const newEnergy = Math.min(tree.energy + 1, 150);
+      if (newEnergy >= 150) {
+        // Se convierte en árbol adulto (tipo de árbol según plantType)
+        return { ...tree, type: tree.plantType, energy: 150 };
+      }
+      return { ...tree, energy: newEnergy };
+    }
+
+    // ÁRBOL ADULTO (NO FLORECIDO NI FRUTADO)
+    if (
+      tree.type && 
+      !tree.type.endsWith('_flor') && 
+      !tree.type.endsWith('_fruto') &&
+      tree.type !== 'seed' && 
+      tree.type !== 'plant'
+    ) {
+      const newEnergy = Math.min(tree.energy + 1, 150);
+      if (newEnergy >= 150) {
+        // Se convierte en árbol florecido
+        return { ...tree, type: `${tree.type}_flor`, energy: 30 };
+      }
+      return { ...tree, energy: newEnergy };
+    }
+
+    // ÁRBOL FLORECIDO
+    if (tree.type && tree.type.endsWith('_flor')) {
+      const newEnergy = Math.min(tree.energy + 1, 150);
+      if (newEnergy >= 150) {
+        // Se convierte en árbol frutado
+        const baseType = tree.type.replace('_flor', '');
+        return { ...tree, type: `${baseType}_fruto`, energy: 150, fruitCycles: 0, lastSeedAttempt: 0 };
+      }
+      return { ...tree, energy: newEnergy };
+    }
+
+    // ÁRBOL FRUTADO
+    if (tree.type && tree.type.endsWith('_fruto')) {
+      // Si no tiene contador, lo inicia
+      if (tree.fruitCycles === undefined) {
+        return { ...tree, energy: 150, fruitCycles: 0, lastSeedAttempt: 0 };
+      }
+      // Si ya puso 4 semillas, vuelve a árbol normal
+      if (tree.fruitCycles >= 4) {
+        const baseType = tree.type.replace('_fruto', '');
+        return { ...tree, type: baseType, energy: 30, fruitCycles: undefined, lastSeedAttempt: undefined };
+      }
+      // Siempre mantiene energía máxima
+      return { ...tree, energy: 150 };
+    }
+
     return tree;
   }).filter(tree => tree !== null);
 }
+
+
 
 const Server = ({ setPointerPos }) => {
 
@@ -262,55 +317,69 @@ const handleAttack = () => {
   if (!attacked) {
     enviarMensaje({ texto: 'No hay nada que atacar aquí!', tipo: 'warning', icono: '⚠️' });
   }
-};
+};  
 
-//handle press
+const handleGetPress = () => {
+  // Buscar semilla en el mapa
+  const seedAtPointer = fixedTreePositions.find(
+    tree => tree.x === pointerPos.x && tree.y === pointerPos.y && tree.type === 'seed'
+  );
 
-  const handleGetPress = () => {
-    const itemToPickUp = itemPositions.find(item => item.x === pointerPos.x && item.y === pointerPos.y);
-  
-    if (itemToPickUp) {
-      const fullItemData = allItems.find(item => item.id === itemToPickUp.id);
-  
-      if (fullItemData) {
-        setInventory(prevInventory => [...prevInventory, fullItemData]);
-        setItemPositions(prevItems => prevItems.filter(item => item.id !== itemToPickUp.id));
-  
-        enviarMensaje({
-          texto: `Picked up ${fullItemData.name} (${fullItemData.id})!`,
-          tipo: 'success',
-          icono: '📦'
-        });
-      } else {
-        enviarMensaje({
-          texto: `Item data not found for ${itemToPickUp.id}`,
-          tipo: 'error',
-          icono: '⚠️'
-        });
-      }
+  if (seedAtPointer) {
+    // Buscar el ítem semilla correspondiente en allItems por plantType
+    const seedItemData = allItems.find(
+      item => item.category === 'potions' && item.plantType === seedAtPointer.plantType
+    );
+
+    if (seedItemData) {
+      setInventory(prev => [
+        ...prev,
+        {
+          ...seedItemData,
+          instanceId: Date.now() + Math.random(), // único para cada semilla
+        }
+      ]);
+      // Quitar la semilla del mapa
+      setFixedTreePositions(prev => prev.filter(
+        tree => !(tree.x === pointerPos.x && tree.y === pointerPos.y && tree.type === 'seed')
+      ));
+      enviarMensaje({ texto: `Recogiste ${seedItemData.name}!`, tipo: 'success', icono: '🌱' });
+    } else {
+      enviarMensaje({ texto: 'No se encontró info de la semilla.', tipo: 'error', icono: '⚠️' });
+    }
+    return;
+  }
+
+  // Aquí sigue la lógica para otros ítems normales
+  const itemToPickUp = itemPositions.find(item => item.x === pointerPos.x && item.y === pointerPos.y);
+
+  if (itemToPickUp) {
+    const fullItemData = allItems.find(item => item.id === itemToPickUp.id);
+
+    if (fullItemData) {
+      setInventory(prevInventory => [...prevInventory, fullItemData]);
+      setItemPositions(prevItems => prevItems.filter(item => item.id !== itemToPickUp.id));
+
+      enviarMensaje({
+        texto: `Recogiste ${fullItemData.name} (${fullItemData.id})!`,
+        tipo: 'success',
+        icono: '📦'
+      });
     } else {
       enviarMensaje({
-        texto: `No item to pick up here!`,
-        tipo: 'warning',
+        texto: `No se encontró info del ítem ${itemToPickUp.id}`,
+        tipo: 'error',
         icono: '⚠️'
       });
     }
-  };
-  
-
-  const handleOkPress = () => {handleAttack}
-
-  //DISPLAYER CONSOLA
-  useEffect(() => {
-    if (!currentZone) return;
-
+  } else {
     enviarMensaje({
-      texto: `You have entered the ${currentZone} zone!`,
-      tipo: 'info',
-      icono: '📍',
+      texto: `No hay nada para recoger aquí!`,
+      tipo: 'warning',
+      icono: '⚠️'
     });
-  }, [currentZone]);
-
+  }
+};
 
   //TILES TERRENO FERTILIDAD
   useEffect(() => {
@@ -320,7 +389,11 @@ const handleAttack = () => {
     //CASAS/////////////
     const newHouses = generateHouses(6, mapWidth, mapHeight, newFertileTiles, isTileFertile);
     setHouses(newHouses);
+
+    
   }, [currentZone]);
+
+  
 
   ///POSICIONES 
   useEffect(() => {
@@ -342,7 +415,7 @@ const handleAttack = () => {
           }
           return tree;
         });
-        return updateSeedsAndPlants(updatedTrees, fertileTiles, getTreeTypeForZone(currentZone));
+        return updateTreeGrowth (updatedTrees, fertileTiles, getTreeTypeForZone(currentZone));
       });
     }, 500);
 
@@ -407,9 +480,48 @@ useEffect(() => {
     setItemPositions(itemPositionsData[currentZone] || []);
   }, [currentZone]);
 
+  //mapa
+  const [citiesState, setCitiesState] = useState(
+    zodiacZones.map(zone => ({
+      name: zone,
+      visited: zone === currentZone,
+    }))
+  );
+
+  useEffect(() => {
+    setCitiesState(prevCities =>
+      prevCities.map(city =>
+        city.name === currentZone ? { ...city, visited: true } : city
+      )
+    );
+  }, [currentZone]);
+
+  const onVisitZone = (zoneName) => {
+    setCurrentZone(zoneName);
+  };
+
+  
 
   //Tirar objetos
   const handleDropItemToWorld = (item, pos) => {
+    if (item.category === 'potions' && item.plantType) {
+      // Plantar la semilla en el mundo
+      setFixedTreePositions(prev => [
+        ...prev,
+        {
+          x: pos.x,
+          y: pos.y,
+          type: 'seed',
+          energy: 5,
+          plantType: item.plantType
+        }
+      ]);
+      setInventory(prev => prev.filter(i => i.instanceId !== item.instanceId));
+      enviarMensaje({ texto: `Semilla plantada en el mundo!`, tipo: 'success', icono: '🌱' });
+      return;
+    }
+  
+    // Para otros ítems normales
     setItemPositions(prev => [
       ...prev,
       {
@@ -418,7 +530,10 @@ useEffect(() => {
         y: pos.y,
       }
     ]);
+    setInventory(prev => prev.filter(i => i.instanceId !== item.instanceId));
+    enviarMensaje({ texto: `${item.name} tirado en el mundo!`, tipo: 'success', icono: '📦' });
   };
+  
   
 
   ///////////////////////////////////RETURN////////////////////////
@@ -498,6 +613,17 @@ useEffect(() => {
       <BookScreen allItems={allItems} />
       <Consola mensajes={mensajesConsola} />
       <Logica enviarMensaje={enviarMensaje} />
+      <Balance 
+  currentZone={currentZone}
+  fixedTreePositions={fixedTreePositions}
+
+/>
+<Cities
+ currentZone={currentZone}
+ citiesState={citiesState}
+ onVisitZone={onVisitZone}
+/>
+
     </div>
   );
 };
