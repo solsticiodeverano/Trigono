@@ -2,6 +2,7 @@
 import { getGovernmentForZone } from './goberments.js';
 import { NPCTypes } from './NPCPositions.jsx';
 
+
 // Define enemigos por zona (puedes expandir esto según tu juego)
 const enemyNPCTypesByZone = {
   Aries:   [NPCTypes.FAUN, NPCTypes.NINJA, NPCTypes.SAMURAI],

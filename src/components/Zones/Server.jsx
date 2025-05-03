@@ -49,6 +49,12 @@ import {
   moveNPC,
 } from './NPCHelpers.js';
 
+//Dragon imports
+import {
+  getInitialDragonPositions,
+  moveDragon,
+} from './DragonHelpers.js';
+
 //ITEMS imports
 import itemPositionsData from './itemPositionsData.js';
 
@@ -204,6 +210,7 @@ const Server = ({ setPointerPos }) => {
   const [direction, setDirection] = useState('down');
   const [animalPositions, setAnimalPositions] = useState([]);
   const [NPCPositions, setNPCPositions] = useState([]);
+  const [DragonPositions, setDragonPositions] = useState([]);
   const allItems = loadGameData() || [];
   const [isDisplayOpen, setIsDisplayOpen] = useState(false);
   const [mensajesConsola, setMensajesConsola] = useState([]);
@@ -225,6 +232,8 @@ const Server = ({ setPointerPos }) => {
       fixedTreePositions.some((tree) => tree.x === x && tree.y === y && tree.type !== 'seed' && tree.type !== 'plant') ||
       animalPositions.some((animal) => animal.x === x && animal.y === y) ||
       NPCPositions.some((NPC) => NPC.x === x && NPC.y === y) ||
+      DragonPositions.some((Dragon) => Dragon.x === x && Dragon.y === y) ||
+
       houses.some(
         (house) =>
           x >= house.x && x <= house.x + 1 && y >= house.y && y <= house.y + 1
@@ -239,6 +248,7 @@ const Server = ({ setPointerPos }) => {
     const seedsAtPosition = fixedTreePositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'seed');
     const plantsAtPosition = fixedTreePositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'plant');
     const NPCAtPosition = NPCPositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'NPC');
+    const DragonAtPosition = DragonPositions.filter(tree => tree.x === x && tree.y === y && tree.type === 'Dragon');
     const animalsAtPosition = animalPositions.filter(
       (animal) => animal.x === x && animal.y === y
     );
@@ -250,6 +260,7 @@ const Server = ({ setPointerPos }) => {
     if (plantsAtPosition.length > 0) objects.push(`Plants: ${plantsAtPosition.length}`);
     if (animalsAtPosition.length > 0) objects.push(`Animals: ${animalsAtPosition.length}`);
     if (NPCAtPosition.length > 0) objects.push(`NPC: ${NPCAtPosition.length}`);
+    if (DragonAtPosition.length > 0) objects.push(`NPC: ${DragonAtPosition.length}`);
     if (itemsAtPosition.length > 0) objects.push(`Items: ${itemPositions.map(item => item.id).join(', ')}`);
 
     return objects.length > 0 ? objects.join(', ') : 'Nothing here.';
@@ -317,7 +328,29 @@ const handleAttack = () => {
   if (!attacked) {
     enviarMensaje({ texto: 'No hay nada que atacar aquí!', tipo: 'warning', icono: '⚠️' });
   }
+
+// Dragons
+const updatedDragons = DragonPositions.map(dragon => ({ ...dragon }));
+for (let i = updatedDragons.length - 1; i >= 0; i--) {
+  const dragon = updatedDragons[i];
+  if (dragon.x === pointerPos.x && dragon.y === pointerPos.y) {
+    dragon.energy -= damage;
+    attacked = true;
+    if (dragon.energy <= 0) {
+      updatedDragons.splice(i, 1);
+      enviarMensaje({ texto: 'Dragon derrotado!', tipo: 'success', icono: '🧑' });
+    } else {
+      enviarMensaje({ texto: `Dragon atacado con ${damage} de daño!`, tipo: 'info', icono: '⚔️' });
+    }
+  }
+}
+setDragonPositions(updatedDragons);
+
+if (!attacked) {
+  enviarMensaje({ texto: 'No hay nada que atacar aquí!', tipo: 'warning', icono: '⚠️' });
+}
 };  
+
 
 const handleGetPress = () => {
   // Buscar semilla en el mapa
@@ -431,6 +464,10 @@ const handleGetPress = () => {
   }, [currentZone]);
 
   useEffect(() => {
+    setDragonPositions(getInitialDragonPositions(currentZone));
+  }, [currentZone]);
+
+  useEffect(() => {
     const energyInterval = setInterval(() => {
       setAnimalPositions(prev => prev.map(animal => ({
         ...animal,
@@ -441,8 +478,15 @@ const handleGetPress = () => {
         ...npc,
         energy: Math.min(npc.energy + 1, 120)
       })));
+
+      setDragonPositions(prev => prev.map(dragon => ({
+        ...dragon,
+        energy: Math.min(dragon.energy + 1, 120)
+      })));
     }, 5000);
   
+
+    
     return () => clearInterval(energyInterval);
   }, []);
 
@@ -468,6 +512,8 @@ useEffect(() => {
   const movementInterval = setInterval(() => {
     setAnimalPositions(prev => moveAnimals(prev, isPositionBlocked));
     setNPCPositions(prev => moveNPC(prev, isPositionBlocked));
+    setDragonPositions(prev => moveDragon(prev, isPositionBlocked));
+
   }, 1000); // Intervalo único para todos
 
   return () => clearInterval(movementInterval);
@@ -550,12 +596,14 @@ useEffect(() => {
   zodiacZones={zodiacZones}
   getInitialAnimalPositions={getInitialAnimalPositions}
   getInitialNPCPositions={getInitialNPCPositions}
+  getInitialDragonPositions={getInitialDragonPositions}
   setAttackPosition={setAttackPosition}
   setDirection={setDirection}
   setPointerPos={setPointerPos}
   setPlayerPos={setPlayerPos}
   setAnimalPositions={setAnimalPositions}
   setNPCPositions={setNPCPositions}
+  setDragonPositions={setDragonPositions}
   setShowAttack={setShowAttack}
   setCanAttack={setCanAttack}
   pointerPos={pointerPos}
@@ -575,6 +623,7 @@ useEffect(() => {
           fixedTreePositions={fixedTreePositions}
           animalPositions={animalPositions}
           NPCPositions={NPCPositions}
+          DragonPositions={DragonPositions}
           pointerPos={pointerPos}
           tileSize={tileSize}
           currentZone={currentZone}

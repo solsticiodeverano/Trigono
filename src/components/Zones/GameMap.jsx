@@ -9,7 +9,8 @@ const GameMap = ({
   animalPositions,
   NPCPositions,
   setAnimalPositions,
-  setNPCPositions
+  setNPCPositions,
+  setDragonPositions,
   showAttack,
   attackPosition,
   setShowAttack,

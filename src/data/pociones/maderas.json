@@ -1,0 +1,99 @@
+[
+    {
+      "id": "wood_pine",
+      "name": "Madera de Pino",
+      "icon": "🦪",
+      "plantType": "pine",
+      "category": "potions",
+      "description": "Madera que crece en un pino."
+    },
+    {
+      "id": "wood_oak",
+      "name": "Madera de Roble",
+      "icon": "🦪",
+      "plantType": "oak",
+      "category": "potions",
+      "description": "Madera que crece en un roble."
+    },
+    {
+      "id": "wood_birch",
+      "name": "Madera de Abedul",
+      "icon": "🦪",
+      "plantType": "birch",
+      "category": "potions",
+      "description": "Madera que crece en un abedul."
+    },
+    {
+      "id": "wood_willow",
+      "name": "Madera de Sauce",
+      "icon": "🦪",
+      "plantType": "willow",
+      "category": "potions",
+      "description": "Madera que crece en un sauce."
+    },
+    {
+      "id": "wood_maple",
+      "name": "Madera de Arce",
+      "icon": "🦪",
+      "plantType": "maple",
+      "category": "potions",
+      "description": "Madera que crece en un arce."
+    },
+    {
+      "id": "wood_spruce",
+      "name": "Madera de Abeto",
+      "icon": "🦪",
+      "plantType": "spruce",
+      "category": "potions",
+      "description": "Madera que crece en un abeto."
+    },
+    {
+      "id": "wood_cedar",
+      "name": "Madera de Cedro",
+      "icon": "🦪",
+      "plantType": "cedar",
+      "category": "potions",
+      "description": "Madera que crece en un cedro."
+    },
+    {
+      "id": "wood_redwood",
+      "name": "Maderade Secuoya",
+      "icon": "🦪",
+      "plantType": "redwood",
+      "category": "potions",
+      "description": "Maderaque crece en una secuoya."
+    },
+    {
+      "id": "wood_cypress",
+      "name": "Madera de Ciprés",
+      "icon": "🦪",
+      "plantType": "cypress",
+      "category": "potions",
+      "description": "Madera que crece en un ciprés."
+    },
+    {
+      "id": "wood_fir",
+      "name": "Madera de Abeto Blanco",
+      "icon": "🦪",
+      "plantType": "fir",
+      "category": "potions",
+      "description": "Madera que crece en un abeto blanco."
+    },
+    {
+      "id": "wood_palm",
+      "name": "Madera de Palma",
+      "icon": "🦪",
+      "plantType": "palm",
+      "category": "potions",
+      "description": "Madera que crece en una palma."
+    },
+    {
+      "id": "wood_baobab",
+      "name": "Madera de Baobab",
+      "icon": "🦪",
+      "plantType": "baobab",
+      "category": "potions",
+      "description": "Madera que crece en un baobab."
+    }
+  ]
+  

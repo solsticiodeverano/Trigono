@@ -141,6 +141,8 @@ const GenerateGreenScreen = ({
   itemPositions,
   allItems, // Receive allItems as a prop
   NPCPositions, // Pass NPC positions as a prop
+  DragonPositions, // Pass NPC positions as a prop
+
 
 }) => {
   const startX = Math.max(0, playerPos.x - Math.floor(screenWidth / 2));
@@ -266,6 +268,18 @@ const GenerateGreenScreen = ({
                 {NPC.emoji}
                 <div className="energy-bar-bg">
       <div className="energy-bar-fg" style={{ width: `${(NPC.energy / 100) * 100}%` }}></div>
+    </div>
+              </div>
+            ) : null
+          )}
+
+              {/* DRAGONS */}
+              {DragonPositions.map(Dragon =>
+            Dragon.x === mapX && Dragon.y === mapY ? (
+              <div key={Dragon.id} className="dragon" style={{ position: 'absolute', top: 0, left: 0, fontSize: `${tileSize * 0.8}px` }}>
+                {Dragon.emoji}
+                <div className="energy-bar-bg">
+      <div className="energy-bar-fg" style={{ width: `${(Dragon.energy / 100) * 100}%` }}></div>
     </div>
               </div>
             ) : null
