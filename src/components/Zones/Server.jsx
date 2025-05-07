@@ -30,6 +30,9 @@ import QuestLog from '../Gameplay/QuestLog.jsx';
 import Consola from '../Visor/Consola.jsx';
 import BookScreen from '../Gameplay/BookScreen.jsx';
 
+//AGUA importa
+import { generateWaterBanks } from './generateWaterBanks.js';
+
 //FLORA imports
 import { generateTreeMaze } from './generateTreeMaze.js';
 
@@ -195,6 +198,8 @@ function updateTreeGrowth(trees, fertileTiles) {
 
 
 
+
+
 const Server = ({ setPointerPos }) => {
 
   ///VARIABLES///
@@ -208,8 +213,8 @@ const Server = ({ setPointerPos }) => {
   const [fertileTiles, setFertileTiles] = useState([]);
   const [houses, setHouses] = useState([]);
   const [direction, setDirection] = useState('down');
-  const [animalPositions, setAnimalPositions] = useState([]);
-  const [NPCPositions, setNPCPositions] = useState([]);
+  const [animalPositions, setAnimalPositions] = useState(getInitialAnimalPositions(currentZone));
+  const [NPCPositions, setNPCPositions] = useState(getInitialNPCPositions(currentZone));
   const [DragonPositions, setDragonPositions] = useState([]);
   const allItems = loadGameData() || [];
   const [isDisplayOpen, setIsDisplayOpen] = useState(false);
@@ -226,20 +231,46 @@ const Server = ({ setPointerPos }) => {
   };
 
  //LOGICA DE JUEGO//
+//1.calcular agua
 
-  const isPositionBlocked = useCallback((x, y) => {
-    return (
-      fixedTreePositions.some((tree) => tree.x === x && tree.y === y && tree.type !== 'seed' && tree.type !== 'plant') ||
-      animalPositions.some((animal) => animal.x === x && animal.y === y) ||
-      NPCPositions.some((NPC) => NPC.x === x && NPC.y === y) ||
-      DragonPositions.some((Dragon) => Dragon.x === x && Dragon.y === y) ||
+const [waterBanks, setWaterBanks] = useState([]);
 
-      houses.some(
-        (house) =>
-          x >= house.x && x <= house.x + 1 && y >= house.y && y <= house.y + 1
-      )
-    );
-  });
+// Genera el agua cuando cambie la zona
+useEffect(() => {
+  const newWaterBanks = generateWaterBanks(mapWidth, mapHeight, currentZone);
+  setWaterBanks(newWaterBanks);
+}, [currentZone]);
+
+// 2. Luego, helpers que los usan
+const bridgeTiles = waterBanks
+  .filter(tile => tile.x === 30 || tile.x === 90)
+  .map(tile => `${tile.x},${tile.y}`);
+
+const isBridgeTile = (x, y) => bridgeTiles.includes(`${x},${y}`);
+const isWaterTile = (x, y) => waterBanks.some(tile => tile.x === x && tile.y === y);
+
+const isPositionBlocked = useCallback((x, y) => {
+  // 1. Bloquea si es tile de agua y NO es puente
+  if (isWaterTile(x, y) && !isBridgeTile(x, y)) return true;
+
+  // 2. Bloquea si hay árbol adulto (no semilla ni planta)
+  if (fixedTreePositions.some(tree => tree.x === x && tree.y === y && tree.type !== 'seed' && tree.type !== 'plant')) return true;
+
+  // 3. Bloquea si hay animal
+  if (animalPositions.some(animal => animal.x === x && animal.y === y)) return true;
+
+  // 4. Bloquea si hay NPC
+  if (NPCPositions.some(NPC => NPC.x === x && NPC.y === y)) return true;
+
+  // 5. Bloquea si hay Dragón
+  if (DragonPositions.some(Dragon => Dragon.x === x && Dragon.y === y)) return true;
+
+  // 6. Bloquea si está dentro de una casa (2x2)
+  if (houses.some(house => x >= house.x && x <= house.x + 1 && y >= house.y && y <= house.y + 1)) return true;
+
+  // Si no está bloqueado por nada, devuelve false
+  return false;
+}, [fixedTreePositions, animalPositions, NPCPositions, DragonPositions, houses, waterBanks]);
 
   //OBJETOS//
 
@@ -271,6 +302,24 @@ const Server = ({ setPointerPos }) => {
   const weaponMultiplier = equippedWeapon?.powerMultiplier || 1;
   const damage = Math.floor(baseDamage * weaponMultiplier);
 
+
+  useEffect(() => {
+    const intervalAnimals = setInterval(() => {
+      setAnimalPositions(prev => moveAnimals(prev, isPositionBlocked));
+    }, 1000);
+
+    const intervalNPCs = setInterval(() => {
+      setNPCPositions(prev => moveNPC(prev, isPositionBlocked));
+    }, 1200);
+
+    return () => {
+      clearInterval(intervalAnimals);
+      clearInterval(intervalNPCs);
+    };
+  }, [isPositionBlocked]);
+
+
+
 const handleAttack = () => {
   let attacked = false;
 
@@ -291,6 +340,7 @@ const handleAttack = () => {
   }
   setFixedTreePositions(updatedTrees);
 
+  //movimientos
   // Animales
   const updatedAnimals = animalPositions.map(animal => ({ ...animal }));
   for (let i = updatedAnimals.length - 1; i >= 0; i--) {
@@ -429,10 +479,24 @@ const handleGetPress = () => {
   
 
   ///POSICIONES 
-  useEffect(() => {
-    const mazeTrees = generateTreeMaze(120, 30, currentZone, fertileTiles, houses);
-    setFixedTreePositions(mazeTrees);
-  }, [currentZone, fertileTiles, houses]);
+
+  
+
+
+// Genera los árboles cuando tengas agua y fértil
+useEffect(() => {
+  if (fertileTiles.length > 0 && waterBanks.length > 0) {
+    const trees = generateTreeMaze(
+      mapWidth,
+      mapHeight,
+      currentZone,
+      fertileTiles,
+      houses,
+      waterBanks // <-- ¡aquí!
+    );
+    setFixedTreePositions(trees);
+  }
+}, [fertileTiles, waterBanks, houses, currentZone]);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -469,27 +533,41 @@ const handleGetPress = () => {
 
   useEffect(() => {
     const energyInterval = setInterval(() => {
-      setAnimalPositions(prev => prev.map(animal => ({
-        ...animal,
-        energy: Math.min(animal.energy + 2, 100)
-      })));
-      
-      setNPCPositions(prev => prev.map(npc => ({
-        ...npc,
-        energy: Math.min(npc.energy + 1, 120)
-      })));
 
       setDragonPositions(prev => prev.map(dragon => ({
         ...dragon,
         energy: Math.min(dragon.energy + 1, 120)
       })));
     }, 5000);
-  
-
     
     return () => clearInterval(energyInterval);
   }, []);
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setNPCPositions(prevNPCs =>
+        moveNPC(prevNPCs, isPositionBlocked)
+      );
+    }, 1200); // Por ejemplo, cada 1.2 segundos
+  
+    return () => clearInterval(interval);
+  }, [isPositionBlocked]);
+
+  useEffect(() => {
+    const intervalAnimals = setInterval(() => {
+      setAnimalPositions(prev => moveAnimals(prev, isPositionBlocked));
+    }, 1000);
+  
+    const intervalNPCs = setInterval(() => {
+      setNPCPositions(prev => moveNPC(prev, isPositionBlocked));
+    }, 1200);
+  
+    return () => {
+      clearInterval(intervalAnimals);
+      clearInterval(intervalNPCs);
+    };
+  }, [isPositionBlocked]);
+  
   const getPointerPos = (playerPos, direction) => {
     switch (direction) {
       case 'up':
@@ -525,6 +603,8 @@ useEffect(() => {
   useEffect(() => {
     setItemPositions(itemPositionsData[currentZone] || []);
   }, [currentZone]);
+
+  
 
   //mapa
   const [citiesState, setCitiesState] = useState(
@@ -631,6 +711,8 @@ useEffect(() => {
           houses={houses}
           itemPositions={itemPositions}
           allItems={allItems} // Pass allItems to GenerateGreenScreen
+          waterBanks={waterBanks}  // <-- aquí pasas el agua
+
         />
       </div>
 
@@ -665,6 +747,8 @@ useEffect(() => {
       <Balance 
   currentZone={currentZone}
   fixedTreePositions={fixedTreePositions}
+  waterTiles={waterBanks}
+
 
 />
 <Cities

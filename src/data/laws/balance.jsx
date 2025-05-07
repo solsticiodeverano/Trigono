@@ -3,29 +3,38 @@ import './balance.css';
 const MIN_TREES = 10;      // Mínimo para equilibrio
 const MAX_TREES = 1500;    // Máximo permitido
 
-const Balance = ({ currentZone, fixedTreePositions }) => {
-  // Cuenta solo árboles maduros (no semillas ni plantas)
-  const treeCount = fixedTreePositions.filter(
-    tree => tree.type !== 'seed' && tree.type !== 'plant'
-  ).length;
+const MIN_WATER = 20;
+const MAX_WATER = 200;
 
-  const isBalanced = treeCount >= MIN_TREES && treeCount <= MAX_TREES;
-  const isOverMax = treeCount > MAX_TREES;
+  const Balance = ({ currentZone, fixedTreePositions, waterTiles }) => {
+    const treeCount = fixedTreePositions.filter(
+      tree => tree.type !== 'seed' && tree.type !== 'plant'
+    ).length;
+  
+    const waterCount = waterTiles.length;
+  
+    const isTreeBalanced = treeCount >= MIN_TREES && treeCount <= MAX_TREES;
+    const isWaterBalanced = waterCount >= MIN_WATER && waterCount <= MAX_WATER;
 
   return (
     <div className="balance-display">
       <p style={{
-        color: isBalanced ? '#4CAF50' : (isOverMax ? '#2196F3' : '#F44336'),
+        color: isTreeBalanced ? '#4CAF50' : '#F44336',
         fontWeight: 'bold'
       }}>
         Árboles: {treeCount} / {MIN_TREES} - {MAX_TREES}
       </p>
-      {isOverMax ? (
-        <p style={{ color: '#2196F3' }}>⚠️ Supera el máximo de árboles permitidos</p>
-      ) : isBalanced ? (
-        <p>✅ Equilibrio</p>
-      ) : (
+      <p style={{
+        color: isWaterBalanced ? '#4CAF50' : '#F44336',
+        fontWeight: 'bold'
+      }}>
+        Agua: {waterCount} / {MIN_WATER} - {MAX_WATER}
+      </p>
+
+      {(!isTreeBalanced || !isWaterBalanced) ? (
         <p>⚠️ Desequilibrio</p>
+      ) : (
+        <p>✅ Equilibrio</p>
       )}
     </div>
   );

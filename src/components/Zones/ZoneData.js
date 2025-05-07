@@ -4,3 +4,4 @@ const zodiacZones = [
   ];
   export default zodiacZones;
   
+  

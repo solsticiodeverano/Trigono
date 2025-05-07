@@ -1,0 +1,15 @@
+[
+    { "signo": "Aries",       "inicio": "03-21", "fin": "04-20" },
+    { "signo": "Tauro",       "inicio": "04-21", "fin": "05-20" },
+    { "signo": "Géminis",     "inicio": "05-21", "fin": "06-20" },
+    { "signo": "Cáncer",      "inicio": "06-21", "fin": "07-22" },
+    { "signo": "Leo",         "inicio": "07-23", "fin": "08-22" },
+    { "signo": "Virgo",       "inicio": "08-23", "fin": "09-22" },
+    { "signo": "Libra",       "inicio": "09-23", "fin": "10-22" },
+    { "signo": "Escorpio",    "inicio": "10-23", "fin": "11-21" },
+    { "signo": "Sagitario",   "inicio": "11-22", "fin": "12-21" },
+    { "signo": "Capricornio", "inicio": "12-22", "fin": "01-20" },
+    { "signo": "Acuario",     "inicio": "01-21", "fin": "02-19" },
+    { "signo": "Piscis",      "inicio": "02-20", "fin": "03-20" }
+  ]
+  

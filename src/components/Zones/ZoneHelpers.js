@@ -46,7 +46,6 @@ export const moveAnimals = (animalPositions, isPositionBlocked) => {
   });
 };
 
-
   export const getInitialAnimalPositions = (zone) => {
     switch (zone) {
       case 'Aries': return initialAnimalPositionsAries;
@@ -78,7 +77,7 @@ export const moveAnimals = (animalPositions, isPositionBlocked) => {
       Sagitario: 'red',
       Capricornio: 'purple',
       Acuario: 'violet',
-      Piscis: 'blue',
+      Piscis: 'cream',
     };
     return zoneColors[zone] || 'lightgray';
   };

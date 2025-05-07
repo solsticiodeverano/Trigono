@@ -75,7 +75,6 @@ const treeIcons = {
 };
 
 
-// Función para aclarar un color
 const lightenColor = (color, amount) => {
   let newColor = color;
 
@@ -127,6 +126,8 @@ const lightenColor = (color, amount) => {
   return color;
 };
 
+
+
 const GenerateGreenScreen = ({
   playerPos,
   screenWidth,
@@ -142,13 +143,14 @@ const GenerateGreenScreen = ({
   allItems, // Receive allItems as a prop
   NPCPositions, // Pass NPC positions as a prop
   DragonPositions, // Pass NPC positions as a prop
-
+  waterBanks = [],
 
 }) => {
   const startX = Math.max(0, playerPos.x - Math.floor(screenWidth / 2));
   const startY = Math.max(0, playerPos.y - Math.floor(screenHeight / 2));
   const baseBackgroundColor = getBackgroundColor(currentZone);
   const lightenedBackgroundColor = lightenColor(baseBackgroundColor, 30);
+  const isWaterTile = (x, y) => waterBanks && waterBanks.some(tile => tile.x === x && tile.y === y);
 
   const getTreeAt = (x, y) => fixedTreePositions.find(tree => tree.x === x && tree.y === y);
   const isTileFertile = (x, y) => {
@@ -160,6 +162,14 @@ const GenerateGreenScreen = ({
   );
 
   const screenTiles = [];
+
+  // Puentes en x = 30 y x = 90 sobre los tiles de agua
+const bridgeTiles = waterBanks
+.filter(tile => tile.x === 30 || tile.x === 90)
+.map(tile => `${tile.x},${tile.y}`); // Usamos string para lookup rápido
+
+const isBridgeTile = (x, y) => bridgeTiles.includes(`${x},${y}`);
+
 
   for (let y = 0; y < screenHeight; y++) {
     const row = [];
@@ -174,14 +184,20 @@ const GenerateGreenScreen = ({
       const isNPClHere = NPCPositions.some(NPC => NPC.x === mapX && NPC.y === mapY);
       const isFertile = isTileFertile(mapX, mapY);
       const isThereHouse = isHouse(mapX, mapY);
+    
+     
       let tileBackgroundColor = baseBackgroundColor;
 
-      if (isThereHouse) {
+      if (isBridgeTile(mapX, mapY)) {
+        tileBackgroundColor = 'black';
+      } else if (isWaterTile(mapX, mapY)) {
+        tileBackgroundColor = 'blue';
+      } else if (isThereHouse) {
         tileBackgroundColor = 'saddlebrown';
       } else if (!isFertile) {
         tileBackgroundColor = lightenedBackgroundColor;
       }
-
+    
       // Find the item at this position
       const item = itemPositions.find(item => item.x === mapX && item.y === mapY);
       const fullItemData = item ? allItems.find(loadedItem => loadedItem.id === item.id) : null;
@@ -274,16 +290,17 @@ const GenerateGreenScreen = ({
           )}
 
               {/* DRAGONS */}
-              {DragonPositions.map(Dragon =>
-            Dragon.x === mapX && Dragon.y === mapY ? (
-              <div key={Dragon.id} className="dragon" style={{ position: 'absolute', top: 0, left: 0, fontSize: `${tileSize * 0.8}px` }}>
-                {Dragon.emoji}
-                <div className="energy-bar-bg">
-      <div className="energy-bar-fg" style={{ width: `${(Dragon.energy / 100) * 100}%` }}></div>
+              {DragonPositions.map(dragon =>
+  dragon.x === mapX && dragon.y === mapY ? (
+    <div key={dragon.id} className="dragon" style={{ position: 'absolute', top: 0, left: 0, fontSize: `${tileSize * 0.8}px` }}>
+      {dragon.emoji}
+      <div className="energy-bar-bg">
+        <div className="energy-bar-fg" style={{ width: `${(dragon.energy / 100) * 100}%` }}></div>
+      </div>
     </div>
-              </div>
-            ) : null
-          )}
+  ) : null
+)}
+
 
           {/* Items (Weapons, Shields, Books, Masks) */}
           {fullItemData && (

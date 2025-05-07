@@ -104,6 +104,27 @@
     border: 2px solid white;
     transform: scale(1.2);
   }
+/*fecha*/
+
+  .birthContainer {
+    margin-top: 1rem;
+    padding: 0.5rem;
+  }
+  
+  .dateInput {
+    padding: 0.5rem;
+    font-size: 1rem;
+    margin-top: 0.3rem;
+  }
+  
+  .signo {
+    position: fixed;
+    bottom: 20vh;
+    right: 10vw;
+    margin-top: 0.5rem;
+    font-weight: bold;
+    color: #444;
+  }
   
   /* Resumen */
   .summary {
