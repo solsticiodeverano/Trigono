@@ -10,6 +10,7 @@ const categories = [
   { id: "maps", icon: "🗺️", label: "Mapas" },
   { id: "potions", icon: "🧪", label: "Pociones" },
   { id: "beast", icon: "🦠", label: "Bestias" },
+  { id: "utils", icon: "🎲", label: "Utils" },
 ];
 
 

@@ -1,13 +1,5 @@
 // Constants/agua.js
 
-import { mundo } from './mundo'; // Asume que `mundo` contiene la estructura de casilleros del juego
-
-// Estados del agua
-const ESTADOS_AGUA = {
-  HIELO: 'hielo',
-  AGUA: 'agua',
-  VAPOR: 'vapor',
-};
 
 // Valores predeterminados
 const VALOR_AGUA = 100; // Valor inicial del agua

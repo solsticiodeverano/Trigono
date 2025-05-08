@@ -31,6 +31,7 @@ const Display = ({
   };
 
   const [selectedShield, setSelectedShield] = useState(null);
+  const [selectedUtils, setSelectedUtils] = useState(null);
   const [selectedBeast, setSelectedBeast] = useState(null);
   const [selectedSkills, setSelectedSkills] = useState([null, null, null, null]);
 
@@ -85,6 +86,7 @@ const Display = ({
                 onEquip={(item) => {
                   if (item.category === "weapons") onEquipWeapon(item);
                   else if (item.category === "shield") setSelectedShield(item);
+                  else if (item.category === "utils") setSelectedUtils(item);
                   else if (item.category === "beast") setSelectedBeast(item);
                 }}
               />
@@ -111,6 +113,7 @@ const Display = ({
             <SelectedPower
               selectedWeapon={selectedWeapon}
               selectedShield={selectedShield}
+              selectedUtils={selectedUtils}
               selectedBeast={selectedBeast}
               selectedSkills={selectedSkills}
             />

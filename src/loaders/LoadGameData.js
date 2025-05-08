@@ -36,6 +36,7 @@ import sustancias from "../data/pociones/sustancias.json";
 import piedras from "../data/pociones/piedras.json";
 import maderas from "../data/pociones/maderas.json";
 import semillas from "../data/pociones/semillas.json";
+import luces from "../data/luces/luces.json"
 
 
 
@@ -84,7 +85,7 @@ export const loadGameData = () => {
       ...addCategory(maderas, "potions"),
       ...addCategory(semillas, "potions"),
 
-
+      ...addCategory(luces, "utils"),
   
       ...addCategory(solar, "quest"),
     ];

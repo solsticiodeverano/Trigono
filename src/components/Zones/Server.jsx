@@ -240,6 +240,46 @@ const Server = ({ setPointerPos }) => {
     setMensajesConsola((prev) => [...prev, { id: Date.now(), texto, tipo, icono }]);
   };
 
+//energias
+
+//ENERGIAS
+// 1. Estado de energías con recarga diferenciada
+const [elementalEnergy, setElementalEnergy] = useState({
+  agua: 50,
+  fuego: 50,
+  tierra: 50,
+  aire: 50,
+  lastUpdate: Date.now()
+});
+
+// 2. Efecto para recarga automática
+useEffect(() => {
+  const interval = setInterval(() => {
+    setElementalEnergy(prev => {
+      const now = Date.now();
+      const timePassed = (now - prev.lastUpdate) / 1000; // Segundos
+      
+      const rechargeRates = {
+        agua: 0.15,    // 15% por segundo
+        fuego: 0.25,   // 25% por segundo
+        tierra: 0.1,   // 10% por segundo
+        aire: 0.2      // 20% por segundo
+      };
+
+      const newEnergy = Object.fromEntries(
+        Object.entries(prev).map(([key, val]) => {
+          if (key === 'lastUpdate') return [key, val];
+          const energyGain = timePassed * rechargeRates[key];
+          return [key, Math.min(val + energyGain, 100)];
+        })
+      );
+
+      return {...newEnergy, lastUpdate: now};
+    });
+  }, 1000);
+
+  return () => clearInterval(interval);
+}, []);
  //LOGICA DE JUEGO//
 
 //0. Luz
@@ -341,6 +381,15 @@ const isPositionBlocked = useCallback((x, y) => {
 
 const handleAttack = () => {
   let attacked = false;
+  if(elementalEnergy.fuego < 20) {
+    enviarMensaje({ texto: 'Energía de fuego insuficiente!', tipo: 'error', icono: '⚠️' });
+    return;
+  }
+
+  setElementalEnergy(prev => ({
+    ...prev,
+    fuego: Math.max(prev.fuego - 20, 0)
+  }));
 
   // Árboles
   const updatedTrees = fixedTreePositions.map(tree => ({ ...tree }));
@@ -743,10 +792,10 @@ useEffect(() => {
         position={playerPos}
         direction={direction}
         stats={{
-          tierra: 75,
-          fuego: 60,
-          viento: 45,
-          agua: 80,
+          tierra: Math.floor(elementalEnergy.tierra),
+          fuego: Math.floor(elementalEnergy.fuego),
+          viento: Math.floor(elementalEnergy.aire),
+          agua: Math.floor(elementalEnergy.agua)
         }}
         selectedPower={selectedPower}
         selectedWeapon={equippedWeapon}

@@ -10,6 +10,8 @@ const bookList = [
   { id: "potions", icon: "🧪", title: "Libro de Pociones", items: [] },
   { id: "books", icon: "📚", title: "Libro de Libros", items: [] },
   { id: "shield", icon: "🛡️", title: "Libro de Escudos", items: [] },
+  { id: "utils", icon: "🎲", title: "Libro de Objetos", items: [] },
+
 ];
 
 const BookScreen = ({ allItems }) => {

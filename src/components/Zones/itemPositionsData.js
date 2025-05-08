@@ -5,6 +5,9 @@ const itemPositionsData = {
     { id: 'espada-002', x: 16, y: 13 }, // Corrected ID
     { id: 'escudo-001', x: 14, y: 11 }, // Corrected ID
     { id: 'wood_baobab', x: 14, y: 10 }, // Corrected ID
+    { id: 'lampara-001', x: 12, y: 10 }, // Corrected ID
+    { id: 'lampara-001', x: 22, y: 10 }, // Corrected ID
+    { id: 'lampara-001', x: 32, y: 10 }, // Corrected ID
 
   ],
   Taurus: [

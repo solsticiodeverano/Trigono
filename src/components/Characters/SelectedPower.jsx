@@ -27,6 +27,7 @@ const handleAssignSkill = (skill, targetIndex) => {
 const SelectedPower = ({
   selectedWeapon,
   selectedShield,
+  selectedUtils,
   selectedBeast,
   selectedSkills = [],
   setSelectedSkills
@@ -60,6 +61,8 @@ const SelectedPower = ({
         <div className={styles.circleLarge}>{selectedWeapon?.icon || "❓"}</div>
         <div className={styles.circleSmall}>{selectedShield?.icon || "❓"}</div>
         <div className={styles.circleLarge}>{selectedBeast?.icon || "❓"}</div>
+        <div className={styles.circleLarge}>{selectedUtils?.icon || "❓"}</div>
+
       </div>
       <div className={styles.skillsRow}>
         {selectedSkills.map((skill, index) => (
