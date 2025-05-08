@@ -736,22 +736,17 @@ useEffect(() => {
     <div className="game-container">
       {/* PlayerController Component */}
       <PlayerController
-  initialPosition={{ x: 11, y: 10 }}
+  initialPosition={playerPos}
   mapWidth={mapWidth}
   mapHeight={mapHeight}
   isPositionBlocked={isPositionBlocked}
   setCurrentZone={setCurrentZone}
   zodiacZones={zodiacZones}
   getInitialAnimalPositions={getInitialAnimalPositions}
-  getInitialNPCPositions={getInitialNPCPositions}
-  getInitialDragonPositions={getInitialDragonPositions}
   setAttackPosition={setAttackPosition}
   setDirection={setDirection}
-  setPointerPos={setPointerPos}
   setPlayerPos={setPlayerPos}
   setAnimalPositions={setAnimalPositions}
-  setNPCPositions={setNPCPositions}
-  setDragonPositions={setDragonPositions}
   setShowAttack={setShowAttack}
   setCanAttack={setCanAttack}
   pointerPos={pointerPos}
@@ -759,9 +754,10 @@ useEffect(() => {
   currentZone={currentZone}
   handleAttack={handleAttack}
   handleGetPress={handleGetPress}
-  canAttack={canAttack}
-
+  elementalEnergy={elementalEnergy}           
+  setElementalEnergy={setElementalEnergy}     
 />
+
 
       <div className="game-map">
         <GenerateGreenScreen
