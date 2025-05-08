@@ -33,8 +33,13 @@ import BookScreen from '../Gameplay/BookScreen.jsx';
 //AGUA importa
 import { generateWaterBanks } from './generateWaterBanks.js';
 
+
 //FLORA imports
 import { generateTreeMaze } from './generateTreeMaze.js';
+
+//light Imports
+import lightTilesAries from '../Lights/lightTiles-Aries.json';
+
 
 //FAUNA imports
 import {
@@ -65,6 +70,11 @@ import itemPositionsData from './itemPositionsData.js';
 import Balance from '../../data/laws/balance.jsx';
 import Cities from '../../data/laws/cities.jsx';
 
+//Luz
+const lightTilesByZone = {
+  Aries: lightTilesAries,
+  // ...
+};
 
 
 //FLORA//
@@ -231,6 +241,15 @@ const Server = ({ setPointerPos }) => {
   };
 
  //LOGICA DE JUEGO//
+
+//0. Luz
+const [lightTiles, setLightTiles] = useState(lightTilesByZone[currentZone] || []);
+useEffect(() => {
+  setLightTiles(lightTilesByZone[currentZone] || []);
+}, [currentZone]);
+
+
+
 //1.calcular agua
 
 const [waterBanks, setWaterBanks] = useState([]);
@@ -711,7 +730,9 @@ useEffect(() => {
           houses={houses}
           itemPositions={itemPositions}
           allItems={allItems} // Pass allItems to GenerateGreenScreen
-          waterBanks={waterBanks}  // <-- aquí pasas el agua
+          waterBanks={waterBanks}  
+          lightTiles={lightTiles}   
+
 
         />
       </div>

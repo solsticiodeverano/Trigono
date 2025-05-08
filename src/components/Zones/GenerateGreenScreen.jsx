@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 import React from 'react';
 import { getBackgroundColor } from './ZoneHelpers';
+import LightingOverlay from '../Lights/LightingOverlay';
 
 
 const treeIcons = {
@@ -144,6 +145,7 @@ const GenerateGreenScreen = ({
   NPCPositions, // Pass NPC positions as a prop
   DragonPositions, // Pass NPC positions as a prop
   waterBanks = [],
+  lightTiles = []
 
 }) => {
   const startX = Math.max(0, playerPos.x - Math.floor(screenWidth / 2));
@@ -333,7 +335,27 @@ const isBridgeTile = (x, y) => bridgeTiles.includes(`${x},${y}`);
     );
   }
 
-  return <>{screenTiles}</>;
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: `${screenWidth * tileSize}px`,
+        height: `${screenHeight * tileSize}px`,
+        overflow: 'hidden'
+      }}
+    >
+      {screenTiles}
+      <LightingOverlay
+        lightTiles={lightTiles}
+        screenWidth={screenWidth}
+        screenHeight={screenHeight}
+        tileSize={tileSize}
+        radius={2}
+        startX={startX}
+        startY={startY}
+      />
+    </div>
+  );
 };
 
 export default GenerateGreenScreen
