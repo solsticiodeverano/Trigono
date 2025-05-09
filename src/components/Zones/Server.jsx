@@ -234,6 +234,9 @@ const Server = ({ setPointerPos }) => {
   const [itemPositions, setItemPositions] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [equippedWeapon, setEquippedWeapon] = useState(null);
+  const [selectedShield, setSelectedShield] = useState(null);
+const [isDefending, setIsDefending] = useState(false);
+
 
   // ----- DISPLAYER -----
   const enviarMensaje = ({ texto, tipo = 'info', icono = 'ℹ️' }) => {
@@ -755,7 +758,10 @@ useEffect(() => {
   handleAttack={handleAttack}
   handleGetPress={handleGetPress}
   elementalEnergy={elementalEnergy}           
-  setElementalEnergy={setElementalEnergy}     
+  setElementalEnergy={setElementalEnergy}
+  selectedShield={selectedShield}
+isDefending={isDefending}
+  setIsDefending={setIsDefending}
 />
 
 
@@ -777,6 +783,7 @@ useEffect(() => {
           allItems={allItems} // Pass allItems to GenerateGreenScreen
           waterBanks={waterBanks}  
           lightTiles={lightTiles}   
+          isDefending={isDefending}
 
 
         />
@@ -803,7 +810,8 @@ useEffect(() => {
         inventory={inventory}
         setInventory={setInventory}
         onDropItemToWorld={handleDropItemToWorld}
-
+  selectedShield={selectedShield}
+  setSelectedShield={setSelectedShield}
         />
 
       <QuestLog inventory={inventory} />

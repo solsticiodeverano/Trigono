@@ -85,7 +85,7 @@ const Display = ({
                 setInventory={setInventory}
                 onEquip={(item) => {
                   if (item.category === "weapons") onEquipWeapon(item);
-                  else if (item.category === "shield") setSelectedShield(item);
+    if (item.category === "shield") setSelectedShield(item);
                   else if (item.category === "utils") setSelectedUtils(item);
                   else if (item.category === "beast") setSelectedBeast(item);
                 }}

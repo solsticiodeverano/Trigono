@@ -145,7 +145,8 @@ const GenerateGreenScreen = ({
   NPCPositions, // Pass NPC positions as a prop
   DragonPositions, // Pass NPC positions as a prop
   waterBanks = [],
-  lightTiles = []
+  lightTiles = [],
+  isDefending,
 
 }) => {
   const startX = Math.max(0, playerPos.x - Math.floor(screenWidth / 2));
@@ -218,22 +219,41 @@ const isBridgeTile = (x, y) => bridgeTiles.includes(`${x},${y}`);
         >
           {/* Player */}
           {mapX === playerPos.x && mapY === playerPos.y && (
-            <div
-              className="player"
-              style={{
-                position: 'absolute',
-                width: `${tileSize}px`,
-                height: `${tileSize}px`,
-                transform: 'translate(-50%, -50%)',
-                top: '50%',
-                left: '50%',
-                pointerEvents: 'none',
-                userSelect: 'none',
-              }}
-            >
-              <div>🙂</div>
-            </div>
-          )}
+  <div
+    className="player"
+    style={{
+      position: 'absolute',
+      width: `${tileSize}px`,
+      height: `${tileSize}px`,
+      transform: 'translate(-50%, -50%)',
+      top: '50%',
+      left: '50%',
+      pointerEvents: 'none',
+      userSelect: 'none',
+    }}
+  >
+    {/* Círculo celeste de defensa */}
+    {isDefending && (
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          width: `${tileSize}px`,
+          height: `${tileSize}px`,
+          borderRadius: '50%',
+          border: '3px solid #00CED1',
+          boxSizing: 'border-box',
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
+    )}
+    {/* Emoji del jugador */}
+    <div style={{ position: 'relative', zIndex: 2 }}>🙂</div>
+  </div>
+)}
+
 
           {/* Tree */}
           {tree && (

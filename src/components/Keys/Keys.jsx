@@ -18,7 +18,7 @@ const useKeyboardControls = ({
         case '2':
         case '3':
         case '4':          onSkill?.(parseInt(e.key)); break;
-        case 'Control':    onProtect?.(); break;
+        case 'Control':    onProtect?.(true); break; // Activar defensa
         case 'g':          onAttack?.(); break;
         case 'Shift':      onRun?.(); break; // Shift para correr
         case 'd':          onGet?.(); break;
@@ -26,8 +26,16 @@ const useKeyboardControls = ({
       }
     };
 
+    const handleKeyUp = (e) => {
+      if (e.key === 'Control') onProtect?.(false); // Desactivar defensa
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+    };
   }, [onMove, onAttack, onGet, onJump, onOk, onBack, onSkill, onProtect, onRun]);
 };
 

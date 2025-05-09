@@ -20,13 +20,17 @@ const PlayerController = ({
   currentZone,
   handleAttack,
   handleGetPress,
-  elementalEnergy,           // <-- Recibe la energía global
-  setElementalEnergy,        // <-- Y el setter global
-}) => {
+  elementalEnergy,           // Energía global
+  setElementalEnergy,
+  inventory,                 // Inventario completo
+  selectedShield,
+  isDefending,
+  setIsDefending}) => {
   const [playerPos, setInternalPlayerPos] = useState(initialPosition);
   const [direction, setInternalDirection] = useState('down');
   const [isRunning, setIsRunning] = useState(false);
   const lastMoveTime = useRef(Date.now());
+  const [defenseReduction, setDefenseReduction] = useState(0.5); // 50% por defecto
 
   // Parámetros de velocidad
   const BASE_DELAY = 350; // ms, cuando viento = 0
@@ -96,6 +100,18 @@ const PlayerController = ({
     lastMoveTime.current = now;
   };
 
+  // Manejo del botón de defensa
+  const handleProtect = (isPressed) => {
+      setIsDefending(isPressed);
+
+    if (isPressed) {
+      // Busca el escudo equipado para modificar la reducción
+      const equippedShield = inventory.find(item => item.category === "shield" && item.equipped);
+      const reduction = equippedShield?.powerReduct ?? 0.5;
+      setDefenseReduction(reduction);
+    }
+  };
+
   useKeyboardControls({
     onMove: (dx, dy) => {
       tryMovePlayer(dx, dy);
@@ -108,13 +124,16 @@ const PlayerController = ({
       setDirection(direction);
       setPlayerPos(playerPos);
     },
-    onAttack: () => { /* ... igual que antes ... */ },
+    onAttack: () => {
+      // Aquí va tu lógica de ataque
+      handleAttack();
+    },
     onJump: () => {},
     onOk: handleAttack,
     onBack: () => {},
     onSkill: (skillId) => {},
-    onProtect: () => {},
-    onRun: () => setIsRunning(true),  // Shift presionado
+    onProtect: handleProtect,
+    onRun: () => setIsRunning(true),
     onGet: handleGetPress,
   });
 
@@ -132,6 +151,22 @@ const PlayerController = ({
     setPlayerPos(playerPos);
     setDirection(direction);
   }, [playerPos, direction, setDirection, setPlayerPos]);
+
+  // Consumo de energía agua mientras defiende
+ useEffect(() => {
+  if (!isDefending) return;
+
+  const interval = setInterval(() => {
+    setElementalEnergy(prev => {
+      const newAgua = Math.max(prev.agua - 1, 0);
+      if (newAgua === 0) setIsDefending(false); // Auto-desactiva si se queda sin energía
+      return { ...prev, agua: newAgua };
+    });
+  }, 300); // cada 300ms gasta 1 punto de agua
+
+  return () => clearInterval(interval);
+}, [isDefending, setElementalEnergy]);
+
 
   return null;
 };
