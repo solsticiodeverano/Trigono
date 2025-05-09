@@ -188,6 +188,7 @@ if (playerHasLight) {
 
 
 
+
   // Puentes en x = 30 y x = 90 sobre los tiles de agua
 const bridgeTiles = waterBanks
 .filter(tile => tile.x === 30 || tile.x === 90)

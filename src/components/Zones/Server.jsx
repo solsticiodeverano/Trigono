@@ -223,8 +223,12 @@ const Server = ({ setPointerPos }) => {
   const [fertileTiles, setFertileTiles] = useState([]);
   const [houses, setHouses] = useState([]);
   const [direction, setDirection] = useState('down');
-  const [animalPositions, setAnimalPositions] = useState(getInitialAnimalPositions(currentZone));
-  const [NPCPositions, setNPCPositions] = useState(getInitialNPCPositions(currentZone));
+const [NPCPositions, setNPCPositions] = useState(() =>
+  getInitialNPCPositions(currentZone).map(npc => ({
+    ...npc,
+    lastPos: null
+  }))
+);  const [animalPositions, setAnimalPositions] = useState(() => getInitialAnimalPositions(currentZone));
   const [DragonPositions, setDragonPositions] = useState([]);
   const allItems = loadGameData() || [];
   const [isDisplayOpen, setIsDisplayOpen] = useState(false);
@@ -239,6 +243,12 @@ const [isDefending, setIsDefending] = useState(false);
 const [humedad, setHumedad] = useState("medio");
 const [selectedUtils, setSelectedUtils] = useState(null);
 
+
+ // Refs para posiciones dinámicas
+const NPCPositionsRef = useRef(NPCPositions);
+const animalPositionsRef = useRef(animalPositions);
+const playerPosRef = useRef(playerPos);
+const DragonPositionsRef = useRef(DragonPositions);
 
   // ----- DISPLAYER -----
   const enviarMensaje = ({ texto, tipo = 'info', icono = 'ℹ️' }) => {
@@ -316,27 +326,64 @@ const isBridgeTile = (x, y) => bridgeTiles.includes(`${x},${y}`);
 const isWaterTile = (x, y) => waterBanks.some(tile => tile.x === x && tile.y === y);
 
 const isPositionBlocked = useCallback((x, y) => {
-  // 1. Bloquea si es tile de agua y NO es puente
   if (isWaterTile(x, y) && !isBridgeTile(x, y)) return true;
-
-  // 2. Bloquea si hay árbol adulto (no semilla ni planta)
   if (fixedTreePositions.some(tree => tree.x === x && tree.y === y && tree.type !== 'seed' && tree.type !== 'plant')) return true;
-
-  // 3. Bloquea si hay animal
-  if (animalPositions.some(animal => animal.x === x && animal.y === y)) return true;
-
-  // 4. Bloquea si hay NPC
-  if (NPCPositions.some(NPC => NPC.x === x && NPC.y === y)) return true;
-
-  // 5. Bloquea si hay Dragón
-  if (DragonPositions.some(Dragon => Dragon.x === x && Dragon.y === y)) return true;
-
-  // 6. Bloquea si está dentro de una casa (2x2)
   if (houses.some(house => x >= house.x && x <= house.x + 1 && y >= house.y && y <= house.y + 1)) return true;
-
-  // Si no está bloqueado por nada, devuelve false
+  if (animalPositionsRef.current.some(animal => animal.x === x && animal.y === y)) return true;
+  if (NPCPositionsRef.current.some(npc => npc.x === x && npc.y === y)) return true;
+  if (DragonPositionsRef.current.some(dragon => dragon.x === x && dragon.y === y)) return true;
+  if (playerPosRef.current.x === x && playerPosRef.current.y === y) return true;
   return false;
-}, [fixedTreePositions, animalPositions, NPCPositions, DragonPositions, houses, waterBanks]);
+}, [fixedTreePositions, houses, waterBanks, isBridgeTile, isWaterTile]);
+
+//NPC movimiento
+
+
+function findNearestFreeTile(x, y, isBlocked, maxRadius = 5) {
+  for (let r = 1; r <= maxRadius; r++) {
+    const borderPositions = [];
+
+    for (let dx = -r; dx <= r; dx++) {
+      for (let dy = -r; dy <= r; dy++) {
+        if (Math.abs(dx) !== r && Math.abs(dy) !== r) continue; // Solo borde
+        const nx = x + dx;
+        const ny = y + dy;
+        if (nx < 0 || ny < 0 || nx >= mapWidth || ny >= mapHeight) continue;
+        borderPositions.push({ x: nx, y: ny });
+      }
+    }
+
+    // Barajar posiciones para búsqueda aleatoria
+    for (let i = borderPositions.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [borderPositions[i], borderPositions[j]] = [borderPositions[j], borderPositions[i]];
+    }
+
+    for (const pos of borderPositions) {
+      if (!isBlocked(pos.x, pos.y)) return pos;
+    }
+  }
+  return null;
+}
+
+
+const isPositionBlockedForNPC = (x, y, self = null) => {
+  if (isWaterTile(x, y) && !isBridgeTile(x, y)) return true;
+  if (fixedTreePositions.some(tree => tree.x === x && tree.y === y && tree.type !== 'seed' && tree.type !== 'plant')) return true;
+  if (houses.some(house => x >= house.x && x <= house.x + 1 && y >= house.y && y <= house.y + 1)) return true;
+  if (playerPosRef.current.x === x && playerPosRef.current.y === y) return true;
+  if (animalPositionsRef.current.some(animal => animal.x === x && animal.y === y)) return true;
+  if (NPCPositionsRef.current.some(npc => {
+    if (self && npc === self) return false; // Ignora al mismo NPC
+    return npc.x === x && npc.y === y;
+  })) return true;
+
+  return false;
+};
+
+
+const isPositionBlockedForAnimal = isPositionBlockedForNPC; // Si quieres reglas iguales, usa la misma. Si no, haz una variante.
+
 
 
 //humedad//
@@ -400,22 +447,41 @@ const playerHasLight = selectedUtils && selectedUtils.category === "utils" && se
   const weaponMultiplier = equippedWeapon?.powerMultiplier || 1;
   const damage = Math.floor(baseDamage * weaponMultiplier);
 
+useEffect(() => {
+  // Reubica NPCs
+  setNPCPositions(prev =>
+    prev.map(npc =>
+      isPositionBlockedForNPC(npc.x, npc.y)
+        ? { ...npc, ...findNearestFreeTile(npc.x, npc.y, isPositionBlockedForNPC) || { x: npc.x, y: npc.y } }
+        : npc
+    )
+  );
 
-  useEffect(() => {
-    const intervalAnimals = setInterval(() => {
-      setAnimalPositions(prev => moveAnimals(prev, isPositionBlocked));
-    }, 1000);
+  // Reubica animales
+  setAnimalPositions(prev =>
+    prev.map(animal =>
+      isPositionBlockedForAnimal(animal.x, animal.y)
+        ? { ...animal, ...findNearestFreeTile(animal.x, animal.y, isPositionBlockedForAnimal) || { x: animal.x, y: animal.y } }
+        : animal
+    )
+  );
+}, [fixedTreePositions, houses, waterBanks, currentZone]);
 
-    const intervalNPCs = setInterval(() => {
-      setNPCPositions(prev => moveNPC(prev, isPositionBlocked));
-    }, 1200);
+  // Movimiento de NPCs cada 3 segundos
+useEffect(() => {
+  const interval = setInterval(() => {
+    setNPCPositions(prev => moveNPC(prev, isPositionBlockedForNPC));
+    setAnimalPositions(prev => moveAnimals(prev, isPositionBlockedForNPC));
+  }, 3000);
+  return () => clearInterval(interval);
+}, [currentZone, fixedTreePositions, houses, waterBanks, isBridgeTile, isWaterTile]);
 
-    return () => {
-      clearInterval(intervalAnimals);
-      clearInterval(intervalNPCs);
-    };
-  }, [isPositionBlocked]);
 
+
+useEffect(() => { NPCPositionsRef.current = NPCPositions; }, [NPCPositions]);
+useEffect(() => { animalPositionsRef.current = animalPositions; }, [animalPositions]);
+useEffect(() => { playerPosRef.current = playerPos; }, [playerPos]);
+useEffect(() => { DragonPositionsRef.current = DragonPositions; }, [DragonPositions]);
 
 
 const handleAttack = () => {
@@ -672,14 +738,13 @@ useEffect(() => {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setNPCPositions(prevNPCs =>
-        moveNPC(prevNPCs, isPositionBlocked)
-      );
-    }, 1200); // Por ejemplo, cada 1.2 segundos
-  
-    return () => clearInterval(interval);
-  }, [isPositionBlocked]);
+  const interval = setInterval(() => {
+    setNPCPositions(prev => moveNPC(prev, isPositionBlocked));
+    setAnimalPositions(prev => moveAnimals(prev, isPositionBlocked));
+  }, 3000);
+  return () => clearInterval(interval);
+}, [currentZone, isPositionBlocked]);
+
 
   useEffect(() => {
     const intervalAnimals = setInterval(() => {
