@@ -236,6 +236,7 @@ const Server = ({ setPointerPos }) => {
   const [equippedWeapon, setEquippedWeapon] = useState(null);
   const [selectedShield, setSelectedShield] = useState(null);
 const [isDefending, setIsDefending] = useState(false);
+const [humedad, setHumedad] = useState("medio");
 
 
   // ----- DISPLAYER -----
@@ -333,6 +334,22 @@ const isPositionBlocked = useCallback((x, y) => {
   // Si no está bloqueado por nada, devuelve false
   return false;
 }, [fixedTreePositions, animalPositions, NPCPositions, DragonPositions, houses, waterBanks]);
+
+
+//humedad//
+// --- FUNCIONES DE HUMEDAD ---
+function getDistance(a, b) {
+  return Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+}
+
+function getHumedad(playerPos, waterBanks) {
+  if (!waterBanks || waterBanks.length === 0) return "bajo";
+  const minDist = Math.min(...waterBanks.map(tile => getDistance(playerPos, tile)));
+  if (minDist >= 1 && minDist <= 5) return "alto";
+  if (minDist >= 6 && minDist <= 20) return "medio";
+  return "bajo";
+}
+
 
   //OBJETOS//
 
@@ -568,6 +585,27 @@ useEffect(() => {
     setFixedTreePositions(trees);
   }
 }, [fertileTiles, waterBanks, houses, currentZone]);
+
+useEffect(() => {
+  setHumedad(getHumedad(playerPos, waterBanks));
+}, [playerPos, waterBanks]);
+useEffect(() => {
+  const interval = setInterval(() => {
+    setElementalEnergy(prev => {
+      const humedadActual = getHumedad(playerPos, waterBanks);
+      let nuevaAgua = prev.agua;
+      if (humedadActual === "alto") {
+        nuevaAgua = Math.min(nuevaAgua + 0.5, 100);
+      } else if (humedadActual === "bajo") {
+        nuevaAgua = Math.max(nuevaAgua - 0.2, 0);
+      }
+      // "medio" no cambia
+      return { ...prev, agua: nuevaAgua };
+    });
+  }, 1000);
+  return () => clearInterval(interval);
+}, [playerPos, waterBanks, setElementalEnergy]);
+
 
   useEffect(() => {
     const interval = setInterval(() => {
