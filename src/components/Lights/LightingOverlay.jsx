@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 
 const LightingOverlay = ({
   lightTiles,
+  allLightTiles,
   screenWidth,
   screenHeight,
   tileSize,
@@ -22,7 +23,7 @@ const LightingOverlay = ({
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     // Para cada lightTile, recorta un círculo degradé
-    for (const tile of lightTiles) {
+    for (const tile of allLightTiles) {
       const centerX = (tile.x - startX) * tileSize + tileSize / 2;
       const centerY = (tile.y - startY) * tileSize + tileSize / 2;
       const grad = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius * tileSize);
@@ -37,7 +38,7 @@ grad.addColorStop(1, 'rgba(0,0,0,0)');     // Borde: completamente negro
       ctx.fill();
       ctx.globalCompositeOperation = 'source-over';
     }
-  }, [lightTiles, screenWidth, screenHeight, tileSize, radius, startX, startY]);
+  }, [allLightTiles, lightTiles, screenWidth, screenHeight, tileSize, radius, startX, startY]);
 
   return (
     <canvas

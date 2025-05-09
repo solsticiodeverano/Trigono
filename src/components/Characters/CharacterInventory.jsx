@@ -71,7 +71,7 @@ const CharacterInventory = ({ inventory, setInventory, onEquip, onDropItemToWorl
           <p>{selectedItem.description}</p>
           <div className={styles.itemActions}>
             <button onClick={handleUseItem}>Usar</button>
-            <button onClick={() => onEquip && onEquip(selectedItem)}>Equipar</button>
+<button onClick={() => onEquip && onEquip(selectedItem)}>Equipar</button>
             <button onClick={handleDropItem}>Tirar</button>
           </div>
         </aside>

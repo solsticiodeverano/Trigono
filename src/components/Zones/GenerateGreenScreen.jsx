@@ -147,6 +147,8 @@ const GenerateGreenScreen = ({
   waterBanks = [],
   lightTiles = [],
   isDefending,
+  lampInHold,
+  playerHasLight,   
 
 }) => {
   const startX = Math.max(0, playerPos.x - Math.floor(screenWidth / 2));
@@ -165,6 +167,26 @@ const GenerateGreenScreen = ({
   );
 
   const screenTiles = [];
+
+  // Detectar lámparas en el mapa
+const lightTilesOnGround = itemPositions
+  .map(item => {
+    const fullItem = allItems.find(i => i.id === item.id);
+    return fullItem ? { ...item, ...fullItem } : null;
+  })
+  .filter(item => item && item.category === "utils" && item.utility === "luz")
+  .map(item => ({ x: item.x, y: item.y }));
+
+const allLightTiles = [
+  ...lightTiles,
+  ...lightTilesOnGround
+];
+
+if (playerHasLight) {
+  allLightTiles.push({ x: playerPos.x, y: playerPos.y });
+}
+
+
 
   // Puentes en x = 30 y x = 90 sobre los tiles de agua
 const bridgeTiles = waterBanks
@@ -250,7 +272,8 @@ const isBridgeTile = (x, y) => bridgeTiles.includes(`${x},${y}`);
       />
     )}
     {/* Emoji del jugador */}
-    <div style={{ position: 'relative', zIndex: 2 }}>🙂</div>
+    <div style={{ position: 'relative', zIndex: 2 }}>  🙂 {lampInHold && '🔥'}
+</div>
   </div>
 )}
 
@@ -366,7 +389,8 @@ const isBridgeTile = (x, y) => bridgeTiles.includes(`${x},${y}`);
     >
       {screenTiles}
       <LightingOverlay
-        lightTiles={lightTiles}
+       allLightTiles={allLightTiles}
+  lightTiles={lightTiles}
         screenWidth={screenWidth}
         screenHeight={screenHeight}
         tileSize={tileSize}

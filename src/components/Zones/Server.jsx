@@ -237,6 +237,7 @@ const Server = ({ setPointerPos }) => {
   const [selectedShield, setSelectedShield] = useState(null);
 const [isDefending, setIsDefending] = useState(false);
 const [humedad, setHumedad] = useState("medio");
+const [selectedUtils, setSelectedUtils] = useState(null);
 
 
   // ----- DISPLAYER -----
@@ -287,10 +288,12 @@ useEffect(() => {
  //LOGICA DE JUEGO//
 
 //0. Luz
-const [lightTiles, setLightTiles] = useState(lightTilesByZone[currentZone] || []);
+const [lightTiles, setLightTiles] = useState(Array.isArray(lightTilesByZone[currentZone]) ? lightTilesByZone[currentZone] : []);
+
 useEffect(() => {
-  setLightTiles(lightTilesByZone[currentZone] || []);
+  setLightTiles(Array.isArray(lightTilesByZone[currentZone]) ? lightTilesByZone[currentZone] : []);
 }, [currentZone]);
+
 
 
 
@@ -375,6 +378,22 @@ function getHumedad(playerPos, waterBanks) {
 
     return objects.length > 0 ? objects.join(', ') : 'Nothing here.';
   };
+
+  //luces
+// 1. Obtener lámparas fijas en el mapa (ya lo haces)
+const lampTiles = itemPositions
+  .map(item => {
+    // Buscá el objeto completo en allItems
+    const fullItem = allItems.find(loadedItem => loadedItem.id === item.id);
+    // Devolvé un objeto combinado
+    return fullItem ? { ...item, ...fullItem } : null;
+  })
+  .filter(item => item && item.category === "utils" && item.name.toLowerCase().includes("lampara"))
+  .map(item => ({ x: item.x, y: item.y }));
+
+  // 2. Verificar si el jugador tiene equipada una lámpara
+const playerHasLight = selectedUtils && selectedUtils.category === "utils" && selectedUtils.utility === "luz";
+
 
   //ACCIONES FUNCIONES TECLADO
   const baseDamage = 50;
@@ -714,6 +733,20 @@ useEffect(() => {
   }, [currentZone]);
 
   
+//detectar si el jugador tiene lampara
+// Suponiendo que tenés un estado selectedUtils en Server.jsx
+const lampInHold = selectedUtils && selectedUtils.name && selectedUtils.name.toLowerCase().includes("lampara");
+
+//combinr fuentes de luz
+
+// 4. Combinar todas las luces
+const allLightTiles = [
+  ...lightTiles,         // luces fijas de la zona
+];
+
+if (playerHasLight) {
+  allLightTiles.push({ x: playerPos.x, y: playerPos.y });
+}
 
   //mapa
   const [citiesState, setCitiesState] = useState(
@@ -820,8 +853,12 @@ isDefending={isDefending}
           itemPositions={itemPositions}
           allItems={allItems} // Pass allItems to GenerateGreenScreen
           waterBanks={waterBanks}  
-          lightTiles={lightTiles}   
+          lightTiles={allLightTiles}   
           isDefending={isDefending}
+  lampInHold={lampInHold}
+  allItems={allItems}
+  playerHasLight={playerHasLight}
+
 
 
         />
@@ -850,6 +887,10 @@ isDefending={isDefending}
         onDropItemToWorld={handleDropItemToWorld}
   selectedShield={selectedShield}
   setSelectedShield={setSelectedShield}
+  selectedUtils={selectedUtils}
+  setSelectedUtils={setSelectedUtils}
+    allItems={allItems}
+
         />
 
       <QuestLog inventory={inventory} />

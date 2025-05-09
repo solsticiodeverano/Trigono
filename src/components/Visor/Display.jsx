@@ -22,6 +22,7 @@ const Display = ({
   onDropItemToWorld,
   selectedWeapon,
   onEquipWeapon,
+  allItems,
 }) => {
   const maxStats = {
     tierra: 100,
@@ -83,12 +84,15 @@ const Display = ({
                 onDropItemToWorld={onDropItemToWorld}
                 pointerPos={pointerPos} 
                 setInventory={setInventory}
-                onEquip={(item) => {
-                  if (item.category === "weapons") onEquipWeapon(item);
-    if (item.category === "shield") setSelectedShield(item);
-                  else if (item.category === "utils") setSelectedUtils(item);
-                  else if (item.category === "beast") setSelectedBeast(item);
-                }}
+            onEquip={(item) => {
+  const fullItem = allItems.find(i => i.id === item.id) || item;
+  if (fullItem.category === "weapons") onEquipWeapon(fullItem);
+  else if (fullItem.category === "shield") setSelectedShield(fullItem);
+  else if (fullItem.category === "utils") setSelectedUtils(fullItem);
+  else if (fullItem.category === "beast") setSelectedBeast(fullItem);
+}}
+
+
               />
             </div>
           </>

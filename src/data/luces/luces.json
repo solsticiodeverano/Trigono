@@ -1,7 +1,10 @@
 [
-    { "id": "lampara-001", "name": "Lampara Aries", "description": "Básico pero útil.", "icon": "🔥" },
-    { "id": "lampara-002", "name": "Lampara Aires", "description": "Brilla con el sol.", "icon": "🔥" },
-    { "id": "lampara-003", "name": "Lampara Aires", "description": "Resiste el fuego.", "icon": "🔥" }
+    { "id": "lampara-001", "name": "Lampara Aries", "description": "Básico pero útil.", "icon": "🔥",   "utility": "luz"
+ },
+    { "id": "lampara-002", "name": "Lampara Aires", "description": "Brilla con el sol.", "icon": "🔥",   "utility": "luz"
+ },
+    { "id": "lampara-003", "name": "Lampara Aires", "description": "Resiste el fuego.", "icon": "🔥",   "utility": "luz"
+ }
   ]
   
   
